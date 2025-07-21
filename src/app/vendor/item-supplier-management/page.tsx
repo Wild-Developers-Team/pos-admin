@@ -87,7 +87,7 @@ function Supplier() {
     primaryMobile: "",
     primaryEmail: "",
     company: "",
-    status: "",
+    status: "ACTIVE",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -490,7 +490,7 @@ function Supplier() {
                 <input
                   type="text"
                   placeholder="First Name"
-                  className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.firstName}
                   onChange={(e) =>
                     handleFilterChange("firstName", e.target.value)
@@ -501,7 +501,7 @@ function Supplier() {
                 <input
                   type="text"
                   placeholder="Last Name"
-                  className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.lastName}
                   onChange={(e) =>
                     handleFilterChange("lastName", e.target.value)
@@ -512,7 +512,7 @@ function Supplier() {
                 <input
                   type="text"
                   placeholder="Company"
-                  className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.company}
                   onChange={(e) =>
                     handleFilterChange("company", e.target.value)
@@ -525,7 +525,7 @@ function Supplier() {
                 <input
                   type="email"
                   placeholder="Email"
-                  className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.primaryEmail}
                   onChange={(e) =>
                     handleFilterChange("primaryEmail", e.target.value)
@@ -536,7 +536,7 @@ function Supplier() {
                 <input
                   type="text"
                   placeholder="Mobile"
-                  className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.primaryMobile}
                   onChange={(e) =>
                     handleFilterChange("primaryMobile", e.target.value)
@@ -546,7 +546,7 @@ function Supplier() {
               <div className="mb-1 w-full xl:w-1/3">
                 <div className="relative w-full">
                   <select
-                    className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                    className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                     value={selectedFilters.status}
                     onChange={(e) =>
                       handleFilterChange("status", e.target.value)
@@ -599,7 +599,7 @@ function Supplier() {
         </div>
 
         <div className="mt-4 w-full">
-          <div className="overflow-x-auto rounded-lg shadow-md">
+          <div className="overflow-x-auto rounded-2xl shadow-md">
             <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
               <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -752,7 +752,7 @@ function Supplier() {
 
         {showModal && selectedSupplier && (
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative max-h-[500px] w-full max-w-md overflow-y-auto rounded-lg bg-white p-6 shadow-lg m-2">
+            <div className="relative max-h-[500px] hide-scrollbar w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg m-2">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
@@ -960,7 +960,7 @@ function Supplier() {
               <div className="mt-4 flex justify-end gap-2">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="rounded bg-gray-500 px-4 py-2 text-sm text-white"
+                  className="rounded-lg bg-gray-500 px-4 py-2 text-sm text-white"
                 >
                   Close
                 </button>
@@ -968,7 +968,7 @@ function Supplier() {
                   <button
                     disabled={loading}
                     onClick={handleSaveEdit}
-                    className="rounded bg-primary px-4 py-2 text-sm text-white"
+                    className="rounded-lg bg-primary px-4 py-2 text-sm text-white"
                   >
                     {loading ? "Updating..." : "Update"}
                   </button>
@@ -981,7 +981,7 @@ function Supplier() {
         {/* Add user modal  */}
         {showAddModal && (
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative max-h-[500px] w-full max-w-md overflow-y-auto rounded-lg bg-white p-6 shadow-lg m-2">
+            <div className="relative max-h-[500px] hide-scrollbar w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg m-2">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowAddModal(false)}

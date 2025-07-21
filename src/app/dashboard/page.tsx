@@ -12,6 +12,7 @@ import {
   CalendarClock,
   Eye,
   Trash2,
+  MapPin,
 } from "lucide-react";
 
 function Home() {

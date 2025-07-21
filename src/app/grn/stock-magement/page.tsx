@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { getSessionData } from "@/utils/session";
 import { postLoginRequest } from "@/services/api.service";
-import { IItem, IItemFilter, IAddItem, IStock, IStockFilter } from "@/types";
+import { IStock, IStockFilter } from "@/types";
 import {
   ADD,
   DELETE,
@@ -339,14 +339,14 @@ function Stock() {
               <input
                 type="text"
                 placeholder="Item Code"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.itemCode}
                 onChange={(e) => handleFilterChange("itemCode", e.target.value)}
               />
               <input
                 type="text"
-                placeholder="Item Description"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                placeholder="Item Name"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.itemDescription}
                 onChange={(e) =>
                   handleFilterChange("itemDescription", e.target.value)
@@ -355,7 +355,7 @@ function Stock() {
               <input
                 type="number"
                 placeholder="Quantity"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.qty}
                 onChange={(e) => handleFilterChange("qty", e.target.value)}
               />
@@ -363,7 +363,7 @@ function Stock() {
             <div className="mt-3 items-center gap-2 space-y-3 md:flex md:space-y-0">
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.location}
                   onChange={(e) =>
                     handleFilterChange("location", e.target.value)
@@ -380,7 +380,7 @@ function Stock() {
               </div>
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.qtyOperator}
                   onChange={(e) =>
                     handleFilterChange("qtyOperator", e.target.value)
@@ -397,7 +397,7 @@ function Stock() {
               </div>
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.status}
                   onChange={(e) => handleFilterChange("status", e.target.value)}
                 >
@@ -435,13 +435,13 @@ function Stock() {
         </div>
 
         <div className="mt-4 w-full">
-          <div className="overflow-x-auto rounded-lg shadow-md">
+          <div className="overflow-x-auto rounded-2xl shadow-md">
             <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
               <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th className="w-[10%] px-6 py-3 text-center">Action</th>
                   <th
-                    className="w-[10%] cursor-pointer px-6 py-3 text-center"
+                    className="cursor-pointer px-6 py-3 text-center"
                     onClick={() => handleSort("code")}
                   >
                     <div className="flex items-center justify-center">
@@ -449,27 +449,43 @@ function Stock() {
                     </div>
                   </th>
                   <th
-                    className="w-[20%] cursor-pointer px-6 py-3 text-center"
+                    className="cursor-pointer px-6 py-3 text-center"
                     onClick={() => handleSort("desription")}
                   >
                     <div className="flex items-center justify-center">
-                      Description {renderSortIcons("description")}
+                      Name {renderSortIcons("description")}
                     </div>
                   </th>
                   <th
-                    className="w-[25%] cursor-pointer px-6 py-3 text-center"
-                    onClick={() => handleSort("category")}
+                    className="cursor-pointer px-6 py-3 text-center"
+                    onClick={() => handleSort("lablePrice")}
                   >
                     <div className="flex items-center justify-center">
-                      Category {renderSortIcons("category")}
+                      Lable Price {renderSortIcons("lablePrice")}
                     </div>
                   </th>
                   <th
-                    className="w-[25%] cursor-pointer px-6 py-3 text-center"
-                    onClick={() => handleSort("brand")}
+                    className="cursor-pointer px-6 py-3 text-center"
+                    onClick={() => handleSort("cost")}
                   >
                     <div className="flex items-center justify-center">
-                      Brand {renderSortIcons("brand")}
+                      Cost {renderSortIcons("cost")}
+                    </div>
+                  </th>
+                  <th
+                    className="cursor-pointer px-6 py-3 text-center"
+                    onClick={() => handleSort("retailPrice")}
+                  >
+                    <div className="flex items-center justify-center">
+                      Sales Price {renderSortIcons("retailPrice")}
+                    </div>
+                  </th>
+                  <th
+                    className="cursor-pointer px-6 py-3 text-center"
+                    onClick={() => handleSort("qty")}
+                  >
+                    <div className="flex items-center justify-center">
+                      Quantity {renderSortIcons("qty")}
                     </div>
                   </th>
                   <th
@@ -487,7 +503,7 @@ function Stock() {
                 {stockList.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={8}
                       className="px-6 py-4 text-center text-gray-500"
                     >
                       No records found.
@@ -524,15 +540,15 @@ function Stock() {
                         </div>
                       </td>
                       <td className="w-[10%] px-6 py-4">{stock.item.code}</td>
-                      <td className="w-[20%] px-6 py-4">
-                        {stock.item.description}
+                      <td className="px-6 py-4">{stock.item.description}</td>
+                      <td className="px-6 py-4">
+                        {stock.lablePrice.toFixed(2)}
                       </td>
-                      <td className="w-[25%] px-6 py-4">
-                        {stock.item.category.description}
+                      <td className="px-6 py-4">{stock.itemCost.toFixed(2)}</td>
+                      <td className="px-6 py-4">
+                        {stock.retailPrice.toFixed(2)}
                       </td>
-                      <td className="w-[25%] px-6 py-4">
-                        {stock.item.brand.description}
-                      </td>
+                      <td className="px-6 py-4">{stock.qty}</td>
                       <td className="w-[10%] px-6 py-4">
                         <span
                           className={`rounded-full px-2.5 py-1 text-xs font-medium ${
@@ -585,7 +601,7 @@ function Stock() {
 
         {showModal && selectedStock && (
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="hide-scrollbar relative m-2 h-150 w-full max-w-md overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
+            <div className="hide-scrollbar relative m-2 h-[500px] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
@@ -831,14 +847,14 @@ function Stock() {
               <div className="mt-4 flex justify-end gap-2">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="rounded bg-gray-500 px-4 py-2 text-sm text-white"
+                  className="rounded-lg bg-gray-500 px-4 py-2 text-sm text-white"
                 >
                   Close
                 </button>
                 {modalMode === "edit" && (
                   <button
                     onClick={handleSaveEdit}
-                    className="rounded bg-primary px-4 py-2 text-sm text-white"
+                    className="rounded-lg bg-primary px-4 py-2 text-sm text-white"
                   >
                     Save
                   </button>

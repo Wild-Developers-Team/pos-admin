@@ -16,6 +16,7 @@ import {
   ADD,
   DELETE,
   FILTERLIST,
+  ITEMSEQUENCE,
   REFDATA,
   UPDATE,
   VIEW,
@@ -79,7 +80,7 @@ function Item() {
   const [newItem, setNewItem] = useState<IAddItem>({
     code: "",
     description: "",
-    status: "",
+    status: "ACTIVE",
     category: "",
     brand: "",
     unit: "",
@@ -264,6 +265,35 @@ function Item() {
     fetchReferenceData();
   }, []);
 
+  // Load item code
+  const fetchItemCodeSequence = async (): Promise<string | null> => {
+    try {
+      const token = getSessionData("accessToken") || "";
+      const username = getSessionData("userProfile")?.username || "";
+
+      const response = await postLoginRequest(
+        "api/v1/item/item-sequence",
+        {},
+        ITEMSEQUENCE,
+        token,
+        username,
+      );
+
+      if (response.success && response.data) {
+        return response.data;
+      } else {
+        showErrorAlert(
+          "Item Code Fetch Failed",
+          response.message || "Failed to fetch item sequence",
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error("Item code sequence fetch error:", error);
+      return null;
+    }
+  };
+
   // Fetch reference data first before tasks
   const fetchReferenceData = async () => {
     try {
@@ -289,6 +319,22 @@ function Item() {
       }
     } catch (error) {
       console.error("Reference Data fetch error:", error);
+    }
+  };
+
+  const handleOpenAddModal = async () => {
+    const itemCode = await fetchItemCodeSequence();
+
+    if (itemCode) {
+      setNewItem({
+        code: itemCode,
+        description: "",
+        status: "ACTIVE",
+        category: "",
+        brand: "",
+        unit: "",
+      });
+      setShowAddModal(true);
     }
   };
 
@@ -441,14 +487,14 @@ function Item() {
               <input
                 type="text"
                 placeholder="Code"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.code}
                 onChange={(e) => handleFilterChange("code", e.target.value)}
               />
               <input
                 type="text"
-                placeholder="Description"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                placeholder="Name"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.description}
                 onChange={(e) =>
                   handleFilterChange("description", e.target.value)
@@ -456,7 +502,7 @@ function Item() {
               />
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.category}
                   onChange={(e) =>
                     handleFilterChange("category", e.target.value)
@@ -475,7 +521,7 @@ function Item() {
             <div className="mt-3 items-center gap-2 space-y-3 md:flex md:space-y-0">
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.brand}
                   onChange={(e) => handleFilterChange("brand", e.target.value)}
                 >
@@ -490,7 +536,7 @@ function Item() {
               </div>
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.unit}
                   onChange={(e) => handleFilterChange("unit", e.target.value)}
                 >
@@ -505,7 +551,7 @@ function Item() {
               </div>
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.status}
                   onChange={(e) => handleFilterChange("status", e.target.value)}
                 >
@@ -526,10 +572,8 @@ function Item() {
           {/* Add Button on the left */}
           {privileges.add && (
             <button
-              onClick={() => {
-                setShowAddModal(true);
-              }}
-              className="rounded-lg border border-primary bg-primary px-4 py-1.5 text-sm font-medium text-white hover:bg-hover"
+              onClick={handleOpenAddModal}
+              className="rounded-lg border  border-primary bg-primary px-4 py-1.5 text-sm font-medium text-white hover:bg-hover"
             >
               Add
             </button>
@@ -540,13 +584,13 @@ function Item() {
             <div className="flex items-center gap-2">
               <button
                 onClick={applyFilters}
-                className="rounded-lg border border-primary bg-primary px-4 py-1.5 text-sm font-medium text-white hover:bg-hover"
+                className="w-20 rounded-lg border border-primary bg-primary px-4 py-1.5 text-sm font-medium text-white hover:bg-hover"
               >
                 Search
               </button>
               <button
                 onClick={resetFilters}
-                className="rounded-lg border border-gray-500 bg-gray-500 px-4 py-1.5 text-sm font-medium text-white hover:border-gray-400 hover:bg-gray-400"
+                className="w-20 rounded-lg border border-gray-500 bg-gray-500 px-4 py-1.5 text-sm font-medium text-white hover:border-gray-400 hover:bg-gray-400"
               >
                 Reset
               </button>
@@ -555,7 +599,7 @@ function Item() {
         </div>
 
         <div className="mt-4 w-full">
-          <div className="overflow-x-auto rounded-lg shadow-md">
+          <div className="overflow-x-auto rounded-2xl shadow-md">
             <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
               <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -573,7 +617,7 @@ function Item() {
                     onClick={() => handleSort("desription")}
                   >
                     <div className="flex items-center justify-center">
-                      Description {renderSortIcons("description")}
+                      Name {renderSortIcons("description")}
                     </div>
                   </th>
                   <th
@@ -707,7 +751,7 @@ function Item() {
 
         {showModal && selectedItem && (
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative m-2 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
@@ -853,14 +897,14 @@ function Item() {
               <div className="mt-4 flex justify-end gap-2">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="rounded bg-gray-500 px-4 py-2 text-sm text-white"
+                  className="rounded-lg bg-gray-500 px-4 py-2 text-sm text-white"
                 >
                   Close
                 </button>
                 {modalMode === "edit" && (
                   <button
                     onClick={handleSaveEdit}
-                    className="rounded bg-primary px-4 py-2 text-sm text-white"
+                    className="rounded-lg bg-primary px-4 py-2 text-sm text-white"
                   >
                     Save
                   </button>
@@ -873,7 +917,7 @@ function Item() {
         {/* Add  modal  */}
         {showAddModal && (
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative m-2 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowAddModal(false)}
@@ -903,13 +947,14 @@ function Item() {
                   name="code"
                   onChange={handleChange}
                   required
+                  disabled
                   pattern="^\S+$"
                   className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
                   value={newItem.code}
                 />
                 <input
                   type="text"
-                  placeholder="Description"
+                  placeholder="Name"
                   name="description"
                   required
                   className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"

@@ -100,7 +100,7 @@ function NewTransfer() {
     const { name, value } = e.target;
     setModalItem((prev: any) => ({
       ...prev,
-      [name]: Number(value),
+      [name]: value === "" ? "" : Number(value),
     }));
   };
 
@@ -186,7 +186,7 @@ function NewTransfer() {
         // Show bill modal with the latest data
         setBillTransferData({
           ...newTransfer,
-          cartItems: [...cartItems], // ✅ include full item data
+          cartItems: [...cartItems],
           date: new Date().toLocaleString(),
           toLocationLabel:
             locations.find((loc) => loc.code === newTransfer.toLocation)
@@ -559,6 +559,9 @@ function NewTransfer() {
                     <select
                       className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                       value={selectedFilters.fromLocation}
+                      disabled={
+                        cartItems.length > 0 || newTransfer.toLocation !== ""
+                      }
                       onChange={(e) =>
                         setSelectedFilters({
                           ...selectedFilters,
@@ -603,6 +606,20 @@ function NewTransfer() {
                         <div
                           key={idx}
                           onClick={() => {
+                            if (!selectedFilters.fromLocation) {
+                              showErrorAlert(
+                                "Please select a From Location before selecting items.",
+                              );
+                              return;
+                            }
+
+                            if (item.qty === 0) {
+                              showErrorAlert(
+                                "Cannot add item with 0 quantity.",
+                              );
+                              return;
+                            }
+
                             setSelectedTransfer(item);
                             setModalItem({
                               id: item.id,
@@ -675,10 +692,10 @@ function NewTransfer() {
                     cartItems.map((item, index) => (
                       <div
                         key={index}
-                        className="flex w-full justify-between gap-2 rounded-2xl border border-gray-200 bg-gray-50 p-2 shadow dark:border-gray-500 dark:bg-gray-800"
+                        className="flex w-full justify-between gap-2 rounded-3xl border border-gray-200 bg-white p-1  dark:border-gray-500 dark:bg-gray-800"
                       >
                         {/* Left: Description & Code */}
-                        <div className="flex w-[60%] flex-col justify-center rounded-xl border bg-gray-50 px-3 py-2 dark:border-gray-500 dark:bg-gray-800">
+                        <div className="flex w-[60%] flex-col justify-center rounded-3xl border bg-white px-3 py-2 dark:border-gray-500 dark:bg-gray-800">
                           <p className="text-sm font-medium text-black dark:text-white">
                             {index + 1}. {item.description} - {item.qty}
                           </p>
@@ -688,7 +705,7 @@ function NewTransfer() {
                         </div>
 
                         {/* Right: Prices, QTY, Actions */}
-                        <div className="flex w-[40%] flex-col justify-between rounded-xl border border-gray-200  bg-gray-50 p-2 px-3 py-2 text-right text-sm  dark:border-gray-500 dark:bg-gray-800">
+                        <div className="flex w-[40%] flex-col justify-between rounded-3xl border border-gray-200  bg-white p-2 px-3 py-2 text-right text-sm  dark:border-gray-500 dark:bg-gray-800">
                           {/* Prices & Quantity Row */}
                           <div className="text-md flex justify-between font-bold">
                             <span className="text-primary">
@@ -708,10 +725,9 @@ function NewTransfer() {
                                 setEditIndex(index);
                                 setShowModal(true);
                               }}
-                              className="flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-500"
+                              className="flex items-center gap-1  rounded-full bg-blue-100 p-2 text-sm text-blue-500 hover:bg-blue-200"
                             >
                               <Edit className="h-4 w-4" />
-                              Edit
                             </button>
                             <button
                               onClick={() => {
@@ -720,10 +736,9 @@ function NewTransfer() {
                                 );
                                 setCartItems(updated);
                               }}
-                              className="flex items-center gap-1 rounded-lg bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-500"
+                              className="flex items-center gap-1  rounded-full bg-red-100 p-2 text-sm text-red-500 hover:bg-red-200"
                             >
                               <Trash2 className="h-4 w-4" />
-                              Remove
                             </button>
                           </div>
                         </div>
@@ -744,12 +759,19 @@ function NewTransfer() {
                     value={newTransfer.toLocation}
                     required
                     name="toLocation"
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const selectedToLocation = e.target.value;
+                      if (selectedToLocation === selectedFilters.fromLocation) {
+                        showErrorAlert(
+                          "To Location cannot be the same as From Location.",
+                        );
+                        return;
+                      }
                       setNewTransfer({
                         ...newTransfer,
-                        toLocation: e.target.value,
-                      })
-                    }
+                        toLocation: selectedToLocation,
+                      });
+                    }}
                   >
                     <option value="">To Location</option>
                     {locations.map((location) => (
@@ -812,16 +834,24 @@ function NewTransfer() {
 
       {showModal && selectedTransfer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-[90%] max-w-md rounded-lg bg-white p-6 text-gray-500 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-200">
+          <div className="w-[90%] max-w-md rounded-3xl bg-white p-6 text-gray-500 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-200">
             <h2 className="mb-2 text-center text-xl font-semibold">
               {selectedTransfer.item.description}
             </h2>
-            <p className="mb-4 text-center text-sm">
+            {/* <p className="mb-2 text-center text-sm">
               <strong>ID :</strong> {selectedTransfer.id}
+            </p> */}
+            <p className="text-md mb-2 text-center">
+              <strong>Quantity :</strong>{" "}
+              <span className="font-semibold text-primary">
+                {" "}
+                {selectedTransfer.qty}
+              </span>
             </p>
             <p className="mb-4 text-center text-sm">
               <strong>Item Code :</strong> {selectedTransfer.item.code}
             </p>
+
             <hr />
             <form>
               <div className="mb-4 mt-4">
@@ -841,22 +871,22 @@ function NewTransfer() {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex  gap-2">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-md mt-4 rounded-lg bg-hover px-4 py-3 font-bold text-white hover:bg-primary"
+                  className="text-md mt-4 w-full rounded-xl bg-hover px-4 py-3 font-bold text-white hover:bg-primary"
                 >
                   Cancel{" "}
-                  <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2">
+                  <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2 text-xs">
                     Esc
                   </span>
                 </button>
                 <button
                   onClick={handleAddOrEditItem}
-                  className="text-md mt-4 rounded-lg bg-red-500 px-4 py-3 font-bold text-white hover:bg-red-400"
+                  className="text-md mt-4 w-full rounded-xl bg-primary px-4 py-3 font-bold text-white hover:bg-hover"
                 >
                   {editIndex !== null ? "Update" : "Add"}{" "}
-                  <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2">
+                  <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2 text-xs">
                     Enter
                   </span>
                 </button>
@@ -868,7 +898,7 @@ function NewTransfer() {
       {showBillModal && billTransferData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div
-            className="relative w-[90%] max-w-2xl rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900"
+            className="relative w-[90%] max-w-2xl rounded-3xl bg-white p-6 shadow-lg dark:bg-gray-900"
             id="bill-content"
           >
             <h2 className="mb-4 text-center text-xl font-bold text-gray-700 dark:text-white">
@@ -936,13 +966,13 @@ function NewTransfer() {
             <div className="mt-6 flex justify-end gap-4">
               <button
                 onClick={() => setShowBillModal(false)}
-                className="rounded bg-gray-300 px-4 py-2 text-sm font-bold text-black hover:bg-gray-400 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                className="w-24 rounded-xl bg-gray-300 px-4 py-2 text-sm font-bold text-black hover:bg-gray-400 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
               >
                 Close
               </button>
               <button
                 onClick={() => window.print()}
-                className="rounded bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500"
+                className="w-24 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-hover"
               >
                 Print Bill
               </button>

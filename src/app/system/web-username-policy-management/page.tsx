@@ -162,7 +162,7 @@ function UserPolicy() {
 
       <div className="grid grid-cols-1">
         <div className="flex flex-col gap-9">
-          <div className="rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+          <div className="rounded-2xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
               <h3 className="font-medium text-black dark:text-white">
                 Username Policy Management
@@ -270,7 +270,7 @@ function UserPolicy() {
                   <button
                     type="button"
                     onClick={handleReset}
-                    className="flex justify-center rounded bg-gray-500 p-3 px-8 py-2 font-medium text-gray hover:bg-gray-400"
+                    className="flex justify-center rounded-lg bg-gray-500 p-3 px-8 py-2 font-medium text-gray hover:bg-gray-400"
                   >
                     Reset
                   </button>
@@ -279,7 +279,7 @@ function UserPolicy() {
                     <button
                       type="submit"
                       disabled={loading || !isFormChanged()}
-                      className={`flex justify-center rounded p-3 px-8 py-2 font-medium text-gray ${
+                      className={`flex justify-center rounded-lg p-3 px-8 py-2 font-medium text-gray ${
                         loading || !isFormChanged()
                           ? "cursor-not-allowed bg-gray-400"
                           : "bg-primary hover:bg-hover"

@@ -339,14 +339,14 @@ function Section() {
             <input
               type="text"
               placeholder="Code"
-              className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+              className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
               value={selectedFilters.code}
               onChange={(e) => handleFilterChange("code", e.target.value)}
             />
             <input
               type="text"
               placeholder="Description"
-              className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+              className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
               value={selectedFilters.description}
               onChange={(e) =>
                 handleFilterChange("description", e.target.value)
@@ -354,7 +354,7 @@ function Section() {
             />
             <div className="relative w-full">
               <select
-                className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.status}
                 onChange={(e) => handleFilterChange("status", e.target.value)}
               >
@@ -372,13 +372,13 @@ function Section() {
           <div className="mt-3 flex items-center justify-end gap-2">
             <button
               onClick={applyFilters}
-              className="rounded-lg border border-primary bg-primary px-4 py-1.5 text-sm font-medium text-white hover:bg-hover"
+              className="w-20 rounded-lg border border-primary bg-primary px-4 py-1.5 text-sm font-medium text-white hover:bg-hover"
             >
               Search
             </button>
             <button
               onClick={resetFilters}
-              className="rounded-lg border border-gray-500 bg-gray-500 px-4 py-1.5 text-sm font-medium text-white hover:border-gray-400 hover:bg-gray-400"
+              className="w-20 rounded-lg border border-gray-500 bg-gray-500 px-4 py-1.5 text-sm font-medium text-white hover:border-gray-400 hover:bg-gray-400"
             >
               Reset
             </button>
@@ -387,7 +387,7 @@ function Section() {
       )}
 
       <div className="mt-4 w-full">
-        <div className="overflow-x-auto shadow-md rounded-lg">
+        <div className="overflow-x-auto rounded-2xl shadow-md">
           <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
             <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -468,7 +468,7 @@ function Section() {
                       </div>
                     </td>
                     <td className="w-[30%] px-6 py-4">{item.code}</td>
-                    <td className="w-[50%] px-6 py-4 text-start">
+                    <td className="w-[50%] px-6 py-4">
                       {item.description}
                     </td>
                     <td className="w-[10%] px-6 py-4">
@@ -522,8 +522,8 @@ function Section() {
       </div>
 
       {showModal && selectedSection && (
-        <div className="fixed inset-0 z-9999 flex items-center text-gray-600 justify-center bg-black bg-opacity-40">
-          <div className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-lg m-2">
+        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
+          <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
             {/* Close Icon Top-Right */}
             <button
               onClick={() => setShowModal(false)}
@@ -598,14 +598,14 @@ function Section() {
             <div className="mt-4 flex justify-end gap-2">
               <button
                 onClick={() => setShowModal(false)}
-                className="rounded bg-gray-500 px-4 py-2 text-sm text-white"
+                className="w-20 rounded-lg bg-gray-500 px-4 py-2 text-sm text-white"
               >
                 Close
               </button>
               {modalMode === "edit" && (
                 <button
                   onClick={handleSaveEdit}
-                  className="rounded bg-primary px-4 py-2 text-sm text-white"
+                  className="w-20 rounded-lg bg-primary px-4 py-2 text-sm text-white"
                 >
                   Save
                 </button>

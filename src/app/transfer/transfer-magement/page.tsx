@@ -331,15 +331,15 @@ function Transfer() {
             <div className="mt-3 items-center gap-2 space-y-3 md:flex md:space-y-0">
               <input
                 type="text"
-                placeholder="Code"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                placeholder="Item Code"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.code}
                 onChange={(e) => handleFilterChange("code", e.target.value)}
               />
               <input
                 type="text"
-                placeholder="Description"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                placeholder="Item Name"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.description}
                 onChange={(e) =>
                   handleFilterChange("itemDescription", e.target.value)
@@ -347,7 +347,7 @@ function Transfer() {
               />
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.fromLocation}
                   onChange={(e) =>
                     handleFilterChange("fromLocation", e.target.value)
@@ -364,7 +364,7 @@ function Transfer() {
               </div>
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.toLocation}
                   onChange={(e) =>
                     handleFilterChange("toLocation", e.target.value)
@@ -383,7 +383,7 @@ function Transfer() {
             <div className="mt-3 items-center gap-2 space-y-3 md:flex md:space-y-0">
               <input
                 type="date"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={
                   selectedFilters.fromDate instanceof Date
                     ? selectedFilters.fromDate.toISOString().split("T")[0]
@@ -393,7 +393,7 @@ function Transfer() {
               />
               <input
                 type="date"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={
                   selectedFilters.toDate instanceof Date
                     ? selectedFilters.toDate.toISOString().split("T")[0]
@@ -403,7 +403,7 @@ function Transfer() {
               />
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.status}
                   onChange={(e) =>
                     handleFilterChange("transferStatus", e.target.value)
@@ -420,7 +420,7 @@ function Transfer() {
               </div>
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.status}
                   onChange={(e) => handleFilterChange("status", e.target.value)}
                 >
@@ -458,13 +458,13 @@ function Transfer() {
         </div>
 
         <div className="mt-4 w-full">
-          <div className="overflow-x-auto rounded-lg shadow-md">
+          <div className="hide-scrollbar overflow-x-auto rounded-2xl shadow-md">
             <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
               <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th className="w-[10%] px-6 py-3 text-center">Action</th>
                   <th
-                    className="w-[10%] cursor-pointer px-6 py-3 text-center"
+                    className="cursor-pointer px-6 py-3 text-center"
                     onClick={() => handleSort("code")}
                   >
                     <div className="flex items-center justify-center">
@@ -472,15 +472,15 @@ function Transfer() {
                     </div>
                   </th>
                   <th
-                    className="w-[20%] cursor-pointer px-6 py-3 text-center"
+                    className="cursor-pointer px-6 py-3 text-center"
                     onClick={() => handleSort("desription")}
                   >
                     <div className="flex items-center justify-center">
-                      Description {renderSortIcons("description")}
+                      Name {renderSortIcons("description")}
                     </div>
                   </th>
                   <th
-                    className="w-[25%] cursor-pointer px-6 py-3 text-center"
+                    className="cursor-pointer px-6 py-3 text-center"
                     onClick={() => handleSort("fromLocation")}
                   >
                     <div className="flex items-center justify-center">
@@ -488,11 +488,43 @@ function Transfer() {
                     </div>
                   </th>
                   <th
-                    className="w-[25%] cursor-pointer px-6 py-3 text-center"
+                    className="cursor-pointer px-6 py-3 text-center"
                     onClick={() => handleSort("toLocation")}
                   >
                     <div className="flex items-center justify-center">
                       To Location {renderSortIcons("toLocation")}
+                    </div>
+                  </th>
+                  <th
+                    className="cursor-pointer px-6 py-3 text-center"
+                    onClick={() => handleSort("lablePrice")}
+                  >
+                    <div className="flex items-center justify-center">
+                      Lable Price {renderSortIcons("lablePrice")}
+                    </div>
+                  </th>
+                  <th
+                    className="cursor-pointer px-6 py-3 text-center"
+                    onClick={() => handleSort("cost")}
+                  >
+                    <div className="flex items-center justify-center">
+                      Cost {renderSortIcons("cost")}
+                    </div>
+                  </th>
+                  <th
+                    className="cursor-pointer px-6 py-3 text-center"
+                    onClick={() => handleSort("retailPrice")}
+                  >
+                    <div className="flex items-center justify-center">
+                      Sales Price {renderSortIcons("retailPrice")}
+                    </div>
+                  </th>
+                  <th
+                    className="cursor-pointer px-6 py-3 text-center"
+                    onClick={() => handleSort("qty")}
+                  >
+                    <div className="flex items-center justify-center">
+                      Quantity {renderSortIcons("qty")}
                     </div>
                   </th>
                   <th
@@ -510,71 +542,91 @@ function Transfer() {
                 {transferList.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={10}
                       className="px-6 py-4 text-center text-gray-500"
                     >
                       No records found.
                     </td>
                   </tr>
                 ) : (
-                  transferList.map((transfer, idx) => (
-                    <tr
-                      key={idx}
-                      className="border-b bg-white text-center dark:bg-gray-800"
-                    >
-                      <td className="w-[10%] px-6 py-4">
-                        <div className="flex items-center justify-center gap-3">
-                          {privileges.view && (
-                            <button
-                              onClick={() =>
-                                handleViewTransfer(transfer.id.toString())
-                              }
-                              title="View"
-                            >
-                              <ScanEye className="h-5 w-5 text-primary" />
-                            </button>
-                          )}
-                          {privileges.update && (
-                            <button
-                              onClick={() =>
-                                handleEditTransfer(transfer.id.toString())
-                              }
-                              title="Update"
-                            >
-                              <FilePenLine className="h-5 w-5 text-success" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                      <td className="w-[10%] px-6 py-4">
-                        {transfer.itemTransferDetails[0]?.item.code}
-                      </td>
-                      <td className="w-[20%] px-6 py-4">
-                        {transfer.itemTransferDetails[0]?.item.description}
-                      </td>
-                      <td className="w-[25%] px-6 py-4">
-                        {transfer.fromLocation.description}
-                      </td>
-                      <td className="w-[25%] px-6 py-4">
-                        {transfer.toLocation.description}
-                      </td>
-                      <td className="w-[10%] px-6 py-4">
-                        <span
-                          className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                            transfer.itemTransferDetails[0]?.item.status ===
-                            "ACTIVE"
-                              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                              : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                          }`}
-                        >
-                          {
-                            transfer.itemTransferDetails[0]?.item
-                              .statusDescription
-                          }
-                        </span>
-                      </td>
-                    </tr>
-                  ))
+                  transferList.flatMap((transfer, idx) =>
+                    transfer.itemTransferDetails.map((detail, dIdx) => (
+                      <tr
+                        key={`${idx}-${dIdx}`}
+                        className="border-b bg-white text-center dark:bg-gray-800"
+                      >
+                        {/* Action buttons */}
+                        <td className="w-[10%] px-6 py-4">
+                          <div className="flex items-center justify-center gap-3">
+                            {privileges.view && (
+                              <button
+                                onClick={() =>
+                                  handleViewTransfer(transfer.id.toString())
+                                }
+                                title="View"
+                              >
+                                <ScanEye className="h-5 w-5 text-primary" />
+                              </button>
+                            )}
+                            {privileges.update && (
+                              <button
+                                onClick={() =>
+                                  handleEditTransfer(transfer.id.toString())
+                                }
+                                title="Update"
+                              >
+                                <FilePenLine className="h-5 w-5 text-success" />
+                              </button>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Code */}
+                        <td className="px-6 py-4">{detail.item.code}</td>
+
+                        {/* Name (description) */}
+                        <td className="px-6 py-4">{detail.item.description}</td>
+
+                        <td className="px-6 py-4">
+                          {transfer.fromLocation.description}
+                        </td>
+                        <td className="px-6 py-4">
+                          {transfer.toLocation.description}
+                        </td>
+
+                        {/* Label Price */}
+                        <td className="px-6 py-4">
+                          {detail.lablePrice.toFixed(2)}
+                        </td>
+
+                        {/* Cost */}
+                        <td className="px-6 py-4">
+                          {detail.totCost.toFixed(2)}
+                        </td>
+
+                        {/* Retail/Sales Price */}
+                        <td className="px-6 py-4">
+                          {detail.retailPrice.toFixed(2)}
+                        </td>
+
+                        {/* Quantity */}
+                        <td className="px-6 py-4">{detail.qty}</td>
+
+                        {/* Status */}
+                        <td className="px-6 py-4">
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                              detail.item.status === "ACTIVE"
+                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                            }`}
+                          >
+                            {detail.item.statusDescription}
+                          </span>
+                        </td>
+                      </tr>
+                    )),
+                  )
                 )}
               </tbody>
             </table>
@@ -614,7 +666,7 @@ function Transfer() {
 
         {showModal && selectedTransfer && (
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="hide-scrollbar relative m-2  w-full max-w-md overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
+            <div className="hide-scrollbar relative m-2  w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg">
               <button
                 onClick={() => setShowModal(false)}
                 className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
@@ -763,14 +815,14 @@ function Transfer() {
               <div className="mt-4 flex justify-end gap-2">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="rounded bg-gray-500 px-4 py-2 text-sm text-white"
+                  className="rounded-lg bg-gray-500 px-4 py-2 text-sm text-white"
                 >
                   Close
                 </button>
                 {modalMode === "edit" && (
                   <button
                     onClick={handleSaveEdit}
-                    className="rounded bg-primary px-4 py-2 text-sm text-white"
+                    className="rounded-lg bg-primary px-4 py-2 text-sm text-white"
                   >
                     Save
                   </button>

@@ -123,7 +123,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 src={"/jit/images/logo/logo-4.png"}
                 alt="Icon"
               /> */}
-              <span className="text-xl font-extrabold text-secondary dark:text-white">
+              <span className="text-2xl font-extrabold text-secondary dark:text-white">
                 AVENTA<span className="text-primary">POS</span>
               </span>
             </div>

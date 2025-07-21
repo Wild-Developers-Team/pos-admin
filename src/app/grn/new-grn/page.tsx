@@ -34,6 +34,7 @@ import {
   ADD,
   DELETE,
   FILTERLIST,
+  ITEMSEQUENCE,
   REFDATA,
   UPDATE,
   VIEW,
@@ -136,7 +137,7 @@ function NewGRN() {
   const [newCategory, setNewCategory] = useState<IAddCategory>({
     code: "",
     description: "",
-    status: "",
+    status: "ACTIVE",
   });
   const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -144,6 +145,51 @@ function NewGRN() {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  // Load item code
+  const fetchItemCodeSequence = async (): Promise<string | null> => {
+    try {
+      const token = getSessionData("accessToken") || "";
+      const username = getSessionData("userProfile")?.username || "";
+
+      const response = await postLoginRequest(
+        "api/v1/item/item-sequence",
+        {},
+        ITEMSEQUENCE,
+        token,
+        username,
+      );
+
+      if (response.success && response.data) {
+        return response.data;
+      } else {
+        showErrorAlert(
+          "Item Code Fetch Failed",
+          response.message || "Failed to fetch item sequence",
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error("Item code sequence fetch error:", error);
+      return null;
+    }
+  };
+
+  const handleOpenAddModal = async () => {
+    const itemCode = await fetchItemCodeSequence();
+
+    if (itemCode) {
+      setNewItem({
+        code: itemCode,
+        description: "",
+        status: "ACTIVE",
+        category: "",
+        brand: "",
+        unit: "",
+      });
+      setShowRegisterItemModal(true);
+    }
   };
 
   const handleCategorySubmit = async (e: React.FormEvent) => {
@@ -218,12 +264,26 @@ function NewGRN() {
     const { name, value } = e.target;
     setModalItem((prev: any) => ({
       ...prev,
-      [name]: Number(value),
+
+      [name]: value === "" ? "" : Number(value),
     }));
   };
 
   const handleAddOrEditItem = (e: React.FormEvent) => {
     e.preventDefault(); // prevent default form behavior
+
+    const { lablePrice, itemCost, salePrice, wholesalePrice } = modalItem;
+    if (
+      parseFloat(lablePrice) < parseFloat(itemCost) ||
+      parseFloat(itemCost) > parseFloat(salePrice) ||
+      parseFloat(itemCost) > parseFloat(wholesalePrice)
+    ) {
+      showErrorAlert(
+        "Invalid Price Configuration",
+        "Ensure: Lable Price ≥ Cost, and Cost ≤ Sale & Wholesale Price",
+      );
+      return;
+    }
 
     const requiredFields = [
       { key: "lablePrice", label: "Lable Price" },
@@ -260,8 +320,26 @@ function NewGRN() {
     }
 
     setShowModal(false);
+    setShowViewModal(false);
     setModalItem({});
     setEditIndex(null);
+  };
+
+  const openAddModalWithGRN = (grn: IViewGRNItem) => {
+    setModalItem({
+      itemCode: grn.item.code,
+      description: grn.item.description,
+      lablePrice: grn.lablePrice,
+      itemCost: grn.itemCost,
+      salePrice: grn.retailPrice,
+      wholesalePrice: grn.wholesalePrice,
+      customerDiscount: 0,
+      wholesaleDiscount: 0,
+      qty: "", // quantity to be entered by user
+    });
+    setSelectedGRN(grn.item);
+    setEditIndex(null);
+    setShowModal(true);
   };
 
   const handleChange = (
@@ -901,9 +979,7 @@ function NewGRN() {
                 </button> */}
 
                 <button
-                  onClick={() => {
-                    setShowRegisterItemModal(true);
-                  }}
+                  onClick={handleOpenAddModal}
                   className="flex h-[40px] items-center gap-2 rounded-xl border border-primary bg-primary px-4 text-sm font-medium text-white transition hover:opacity-90"
                 >
                   <PlusCircle className="h-4 w-4" />
@@ -1020,8 +1096,8 @@ function NewGRN() {
                 <div className="w-full space-y-2 text-white">
                   {/* Table Header */}
                   <div className="mb-1 flex w-full items-center justify-between text-sm font-bold">
-                    <div className="text-md w-[60%] px-2 text-primary">
-                      Item Description
+                    <div className="text-md w-[40%] px-2 text-primary">
+                      Item Name
                     </div>
                     <div className="flex w-[60%] justify-between px-2 text-[12px]">
                       <span className="text-primary">Lable Price</span>
@@ -1041,10 +1117,10 @@ function NewGRN() {
                     cartItems.map((item, index) => (
                       <div
                         key={index}
-                        className="flex w-full justify-between gap-2 rounded-2xl border border-gray-200 bg-gray-50 p-2 shadow dark:border-gray-500 dark:bg-gray-800"
+                        className="flex w-full justify-between gap-2 rounded-3xl border border-gray-200 bg-white p-2  dark:border-gray-500 dark:bg-gray-800"
                       >
                         {/* Left: Description & Code */}
-                        <div className="flex w-[40%] flex-col justify-center rounded-xl border bg-gray-50 px-3 py-2 dark:border-gray-500 dark:bg-gray-800">
+                        <div className="flex w-[40%] flex-col justify-center rounded-2xl border bg-white px-3 py-2 dark:border-gray-500 dark:bg-gray-800">
                           <p className="text-sm font-medium text-black dark:text-white">
                             {index + 1}. {item.description} - {item.qty}
                           </p>
@@ -1054,56 +1130,53 @@ function NewGRN() {
                         </div>
 
                         {/* Right: Prices, QTY, Actions */}
-                        <div className="flex w-[60%] flex-col justify-between rounded-xl border border-gray-200  bg-gray-50 p-2 px-3 py-2 text-right text-sm  dark:border-gray-500 dark:bg-gray-800">
+                        <div className="flex w-[60%] flex-col justify-between rounded-2xl border border-gray-200  bg-white p-2 px-3 py-2 text-right text-sm  dark:border-gray-500 dark:bg-gray-800">
                           {/* Prices & Quantity Row */}
                           <div className="flex justify-between text-sm font-bold">
-                            <span className="text-primary">
+                            <span className="text-gray-600 dark:text-gray-400">
                               {item.lablePrice?.toFixed(2)}
                             </span>
-                            <span className="text-primary">
+                            <span className="text-gray-600 dark:text-gray-400">
                               {item.itemCost?.toFixed(2)}
                             </span>
-                            <span className="text-primary">
+                            <span className="text-gray-600 dark:text-gray-400">
                               {item.salePrice?.toFixed(2)}
                             </span>
-                            <span className="text-primary">
+                            <span className="text-gray-600 dark:text-gray-400">
                               {item.wholesalePrice?.toFixed(2)}
                             </span>
                             <span className="text-primary">{item.qty}</span>
                           </div>
 
                           {/* Total */}
-                          <div className="mt-1 flex justify-between text-lg font-bold text-black dark:text-white">
-                            <span>Total :</span>
-                            <span>{(item.qty * item.itemCost).toFixed(2)}</span>
-                          </div>
-
-                          {/* Action Buttons */}
-                          <div className="mt-2 flex justify-end gap-2">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setModalItem(item);
-                                setEditIndex(index);
-                                setShowModal(true);
-                              }}
-                              className="flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-500"
-                            >
-                              <Edit className="h-4 w-4" />
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => {
-                                const updated = cartItems.filter(
-                                  (_, i) => i !== index,
-                                );
-                                setCartItems(updated);
-                              }}
-                              className="flex items-center gap-1 rounded-lg bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-500"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              Remove
-                            </button>
+                          <div className="mt-4 flex items-center justify-between">
+                            <span className="text-[18px] font-bold text-gray-500 dark:text-gray-300">
+                              Total : {(item.qty * item.itemCost).toFixed(2)}
+                            </span>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setModalItem(item);
+                                  setEditIndex(index);
+                                  setShowModal(true);
+                                }}
+                                className="flex items-center gap-1  rounded-full bg-blue-100 p-2 text-sm text-blue-500 hover:bg-blue-200"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  const updated = cartItems.filter(
+                                    (_, i) => i !== index,
+                                  );
+                                  setCartItems(updated);
+                                }}
+                                className="flex items-center gap-1  rounded-full bg-red-100 p-2 text-sm text-red-500 hover:bg-red-200"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1207,13 +1280,17 @@ function NewGRN() {
       </div>
 
       {showModal && selectedGRN && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black  bg-opacity-50">
-          <div className="w-[90%] max-w-xl rounded-xl bg-white p-6 text-gray-700 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
-            <h2 className="font-semibol mb-2 text-center text-xl">
+        <div className="fixed inset-0 z-999 flex items-center justify-center bg-black  bg-opacity-50">
+          <div className="w-[90%] max-w-xl rounded-3xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
+            <h2 className="mb-2 text-center text-xl font-semibold">
               {selectedGRN.description}
             </h2>
             <p className="mb-4 text-center text-sm">
-              <strong>Item Code:</strong> {selectedGRN.code}
+              <strong>Item Code :</strong>{" "}
+              <span className="font-semibold text-primary">
+                {" "}
+                {selectedGRN.code}
+              </span>
             </p>
             <hr />
             <form>
@@ -1221,7 +1298,7 @@ function NewGRN() {
                 <div className="flex-col justify-center">
                   <div className="ustify-between flex w-full gap-4">
                     <div className="w-1/2">
-                      <strong>Label Price</strong>
+                      <strong>Lable Price</strong>
                       <input
                         type="number"
                         name="lablePrice"
@@ -1305,22 +1382,22 @@ function NewGRN() {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex  gap-2">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-md mt-4 rounded-lg bg-hover px-4 py-3 font-bold text-white hover:bg-primary"
+                  className="text-md mt-4 w-full rounded-2xl bg-gray-400 px-4 py-3 font-bold text-white hover:bg-gray-500"
                 >
                   Cancel{" "}
-                  <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2">
+                  <span className="ml-2 inline rounded-lg bg-black-2 p-1 px-2 text-xs">
                     Esc
                   </span>
                 </button>
                 <button
                   onClick={handleAddOrEditItem}
-                  className="text-md mt-4 rounded-lg bg-red-500 px-4 py-3 font-bold text-white hover:bg-red-400"
+                  className="text-md mt-4 w-full rounded-2xl bg-primary px-4 py-3 font-bold text-white hover:bg-hover"
                 >
                   {editIndex !== null ? "Update" : "Add"}{" "}
-                  <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2">
+                  <span className="ml-2 inline rounded-lg bg-black-2 p-1 px-2 text-xs">
                     Enter
                   </span>
                 </button>
@@ -1331,7 +1408,7 @@ function NewGRN() {
       )}
       {showViewModal && selectedViewGRN && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-4xl rounded-xl bg-white p-6 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800">
+          <div className="w-full max-w-4xl rounded-3xl bg-white p-6 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800">
             <h2 className="mb-4 text-xl font-bold text-primary">
               {selectedViewGRN[0]?.item?.description}
             </h2>
@@ -1341,18 +1418,27 @@ function NewGRN() {
                 <table className="min-w-full table-auto text-sm">
                   <thead className="bg-gray-200 dark:bg-gray-700">
                     <tr>
-                      <th className="px-4 py-2 text-left">Location</th>
-                      <th className="px-4 py-2 text-left">Label Price</th>
-                      <th className="px-4 py-2 text-left">Cost</th>
-                      <th className="px-4 py-2 text-left">Sale</th>
-                      <th className="px-4 py-2 text-left">Whole Sale</th>
-                      <th className="px-4 py-2 text-left">QTY</th>
-                      <th className="px-4 py-2 text-left">Action</th>
+                      <th className="px-4 py-2 text-center">Location</th>
+                      <th className="px-4 py-2 text-center">Label Price</th>
+                      <th className="px-4 py-2 text-center">Cost</th>
+                      <th className="px-4 py-2 text-center">Sale</th>
+                      <th className="px-4 py-2 text-center">Whole Sale</th>
+                      <th className="px-4 py-2 text-center">QTY</th>
+                      <th className="px-4 py-2 text-center">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y dark:divide-gray-700">
                     {selectedViewGRN.map((grn, index) => (
-                      <tr key={index} className="bg-white dark:bg-gray-800">
+                      <tr
+                        key={index}
+                        onClick={(e) => {
+                          // prevent click if inside a button
+                          const target = e.target as HTMLElement;
+                          if (target.closest("button")) return;
+                          openAddModalWithGRN(grn);
+                        }}
+                        className="cursor-pointer bg-white text-center dark:bg-gray-800"
+                      >
                         <td className="px-4 py-2">
                           {grn.location.description || "Unknown"}
                         </td>
@@ -1368,25 +1454,27 @@ function NewGRN() {
                         </td>
                         <td className="px-4 py-2">{grn.qty}</td>
                         <td className="px-4 py-2">
-                          <div className="flex items-center gap-2">
+                          <div className="flex gap-1">
                             <button
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setSelectedGRN(grn);
                                 setEditModalVisible(true);
                               }}
-                              className="rounded bg-lime-600 px-2 py-1 text-xs text-white hover:bg-lime-700"
+                              className="w-full rounded-lg  bg-lime-600 px-4 py-1 text-xs text-white hover:bg-lime-700"
                             >
                               Edit Stock
                             </button>
 
                             <button
-                              onClick={() =>
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 handleActive(
                                   grn.id.toString(),
                                   grn.status as "ACTIVE" | "INACTIVE",
-                                )
-                              }
-                              className={`w-24 rounded px-2 py-1 text-xs text-white transition-colors duration-200 ${
+                                );
+                              }}
+                              className={`w-full rounded-lg px-2 py-1 text-xs text-white transition-colors duration-200 ${
                                 grn.status === "ACTIVE"
                                   ? "bg-green-500 hover:bg-green-600"
                                   : "bg-red-500 hover:bg-red-600"
@@ -1399,7 +1487,7 @@ function NewGRN() {
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot className="bg-gray-100 font-semibold dark:bg-gray-900">
+                  <tfoot className="bg-gray-100 text-center font-semibold dark:bg-gray-900">
                     <tr>
                       <td className="px-4 py-2">Sub Total</td>
                       <td className="px-4 py-2">
@@ -1427,16 +1515,15 @@ function NewGRN() {
                       </td>
                       <td className="px-4 py-2 text-blue-600">
                         Profit:{" "}
-                        {(
-                          selectedViewGRN.reduce(
-                            (s, g) => s + g.retailPrice * g.qty,
-                            0,
-                          ) -
-                          selectedViewGRN.reduce(
-                            (s, g) => s + g.itemCost * g.qty,
+                        {selectedViewGRN
+                          .reduce(
+                            (sum, g) =>
+                              sum +
+                              ((g.retailPrice || 0) - (g.itemCost || 0)) *
+                                (g.qty || 0),
                             0,
                           )
-                        ).toFixed(2)}
+                          .toFixed(2)}
                       </td>
                     </tr>
                   </tfoot>
@@ -1447,7 +1534,7 @@ function NewGRN() {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setShowViewModal(false)}
-                className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                className="rounded-xl bg-gray-400 px-6 py-2 text-white hover:bg-gray-500"
               >
                 Close
               </button>
@@ -1457,7 +1544,7 @@ function NewGRN() {
       )}
       {editModalVisible && selectedGRN && (
         <div className="fixed inset-0 z-50 flex  items-center justify-center bg-black bg-opacity-50">
-          <div className="hide-scrollbar h-150 w-full max-w-md overflow-y-auto rounded-xl bg-white p-6 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800">
+          <div className="hide-scrollbar h-150 w-full max-w-md overflow-y-auto rounded-3xl bg-white p-6 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800">
             <h2 className="mb-4 text-lg font-semibold text-primary">
               Edit GRN Stock
             </h2>
@@ -1465,7 +1552,7 @@ function NewGRN() {
             <div className="space-y-3 text-sm">
               <div>
                 <label className="block text-gray-700 dark:text-gray-200">
-                  Label Price
+                  Lable Price
                 </label>
                 <input
                   type="number"
@@ -1577,10 +1664,10 @@ function NewGRN() {
               </div>
             </div>
 
-            <div className="mt-6 flex justify-between">
+            <div className="mt-6 flex gap-2">
               <button
                 onClick={() => setEditModalVisible(false)}
-                className="w-20 rounded-lg bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
+                className="w-full rounded-xl bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
               >
                 Cancel
               </button>
@@ -1591,7 +1678,7 @@ function NewGRN() {
                     setEditModalVisible(false); // Then close
                   }
                 }}
-                className="w-20 rounded-lg bg-primary px-4 py-2 text-white hover:bg-hover"
+                className="w-full rounded-xl bg-primary px-4 py-2 text-white hover:bg-hover"
               >
                 Save
               </button>
@@ -1603,7 +1690,7 @@ function NewGRN() {
       {/* Register Item  */}
       {showRegisterItemModal && (
         <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-          <div className="relative m-2 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+          <div className="relative m-2 w-full max-w-md rounded-3xl bg-white p-6 shadow-lg">
             {/* Close Icon Top-Right */}
             <button
               onClick={() => setShowRegisterItemModal(false)}
@@ -1639,7 +1726,7 @@ function NewGRN() {
               />
               <input
                 type="text"
-                placeholder="Description"
+                placeholder="Name"
                 name="description"
                 required
                 className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
@@ -1719,17 +1806,17 @@ function NewGRN() {
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex  gap-2">
                 <button
                   type="submit"
-                  className="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-hover"
+                  className="w-full rounded-xl bg-primary px-4 py-2 text-sm text-white hover:bg-hover"
                 >
                   Add Item
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowRegisterItemModal(false)}
-                  className="rounded-lg bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-400"
+                  className="w-full rounded-xl bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-400"
                 >
                   Cancel
                 </button>
@@ -1741,7 +1828,7 @@ function NewGRN() {
 
       {showCategoryModal && (
         <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-          <div className="relative m-2 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+          <div className="relative m-2 w-full max-w-md rounded-3xl bg-white p-6 shadow-lg">
             {/* Close Icon Top-Right */}
             <button
               onClick={() => setShowCategoryModal(false)}
@@ -1777,7 +1864,7 @@ function NewGRN() {
               />
               <input
                 type="text"
-                placeholder="Description"
+                placeholder="Name"
                 name="description"
                 required
                 className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
@@ -1804,17 +1891,17 @@ function NewGRN() {
                 <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
               </div>
 
-              <div className="flex justify-end gap-2">
+              <div className="mt-2 flex justify-end gap-2">
                 <button
                   type="submit"
-                  className="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-hover"
+                  className="w-full rounded-xl bg-primary px-4 py-2 text-sm text-white hover:bg-hover"
                 >
                   Add Category
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowCategoryModal(false)}
-                  className="rounded-lg bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-400"
+                  className="w-full rounded-xl bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-400"
                 >
                   Cancel
                 </button>

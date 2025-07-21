@@ -2,20 +2,10 @@
 import {
   ChevronDown,
   ChevronUp,
-  Delete,
   Edit,
-  Eye,
-  FilePenLine,
-  House,
   Save,
-  ScanEye,
-  ScanSearch,
   Trash2,
-  User,
-  View,
-  CircleCheckBig,
   CircleX,
-  UserPlus,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
@@ -52,6 +42,10 @@ function NewTransfer() {
   const [selectedTransfer, setSelectedTransfer] = useState<any>(null);
 
   const [editModalVisible, setEditModalVisible] = useState(false);
+
+  // Print functions
+  const [showBillModal, setShowBillModal] = useState(false);
+  const [billTransferData, setBillTransferData] = useState<any>(null);
 
   const [cartItems, setCartItems] = useState<ICartTransferItem[]>([]);
   const [modalItem, setModalItem] = useState<any>({
@@ -188,6 +182,21 @@ function NewTransfer() {
           "Success",
           response.message || "Transfer item created successfully",
         );
+
+        // Show bill modal with the latest data
+        setBillTransferData({
+          ...newTransfer,
+          cartItems: [...cartItems], // ✅ include full item data
+          date: new Date().toLocaleString(),
+          toLocationLabel:
+            locations.find((loc) => loc.code === newTransfer.toLocation)
+              ?.description ?? newTransfer.toLocation,
+          fromLocationLabel:
+            locations.find((loc) => loc.code === selectedFilters.fromLocation)
+              ?.description ?? selectedFilters.fromLocation,
+        });
+
+        setShowBillModal(true);
         // fetchGRN();
         setNewTransfer({
           fromLocation: "",
@@ -524,7 +533,7 @@ function NewTransfer() {
                     type="text"
                     ref={searchInputRef}
                     placeholder="Code"
-                    className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                    className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                     value={selectedFilters.code}
                     onChange={(e) =>
                       setSelectedFilters({
@@ -537,7 +546,7 @@ function NewTransfer() {
                     type="text"
                     placeholder="Description"
                     ref={searchInputRef}
-                    className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                    className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                     value={selectedFilters.description}
                     onChange={(e) =>
                       setSelectedFilters({
@@ -548,7 +557,7 @@ function NewTransfer() {
                   />
                   <div className="relative w-full">
                     <select
-                      className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                      className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                       value={selectedFilters.fromLocation}
                       onChange={(e) =>
                         setSelectedFilters({
@@ -564,7 +573,7 @@ function NewTransfer() {
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
+                    <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-gray-100 p-1 text-gray-500 dark:bg-gray-700 dark:text-gray-200" />
                   </div>
                 </div>
               </>
@@ -576,7 +585,7 @@ function NewTransfer() {
               >
                 <div className="rounded-2xl border border-gray-200 bg-white p-4  dark:border-gray-700 dark:bg-gray-900">
                   {/* Header Row */}
-                  <div className="hidden grid-cols-5 gap-4 px-4 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 md:grid">
+                  <div className="sticky top-0 z-10 grid grid-cols-5 gap-4  border-gray-200 bg-white px-4 py-4 text-sm font-semibold text-gray-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
                     <div className="text-center">Code</div>
                     <div className="text-center">Item Name</div>
                     <div className="text-center">Cost</div>
@@ -605,7 +614,7 @@ function NewTransfer() {
                             setEditIndex(null);
                             setShowModal(true);
                           }}
-                          className="grid grid-cols-1 gap-y-2 rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm shadow-sm transition hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 md:grid-cols-5 md:gap-4"
+                          className="grid grid-cols-1 items-center gap-y-2 rounded-xl border border-gray-100 bg-gray-50 p-2 text-center text-xs shadow-sm transition hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 md:grid-cols-5 md:gap-4"
                         >
                           <div className="text-center font-medium text-gray-800 dark:text-white md:text-center">
                             {item.item.code}
@@ -616,12 +625,12 @@ function NewTransfer() {
                           <div className="text-center text-gray-700 dark:text-gray-200 md:text-center">
                             {item.itemCost.toFixed(2)}
                           </div>
-                          <div className="text-center text-gray-700 dark:text-gray-200 md:text-center">
-                            {item.qty.toFixed(2)}
+                          <div className="text-center font-bold text-gray-700 dark:text-gray-200 md:text-center">
+                            {item.qty}
                           </div>
                           <div className="text-center md:text-center">
                             <span
-                              className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                              className={`inline-block rounded-full p-1 px-3 text-xs font-semibold ${
                                 item.status === "ACTIVE"
                                   ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
                                   : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
@@ -644,7 +653,7 @@ function NewTransfer() {
         <div className="flex w-full flex-col overflow-hidden p-4 md:w-1/2">
           <form onSubmit={handleSubmit} className="flex h-full flex-col">
             <div className="grow overflow-hidden">
-              <div className="hide-scrollbar h-full overflow-y-auto rounded-xl border border-gray-300 bg-gray-200 p-2 dark:border-gray-700 dark:bg-gray-900">
+              <div className="hide-scrollbar h-full overflow-y-auto rounded-xl border border-gray-200 bg-white p-2 dark:border-gray-700 dark:bg-gray-900">
                 <div className="w-full space-y-2 text-white">
                   {/* Table Header */}
                   <div className="mb-1 flex w-full items-center justify-between text-sm font-bold">
@@ -659,33 +668,35 @@ function NewTransfer() {
 
                   {/* Table Body */}
                   {cartItems.length === 0 ? (
-                    <div className="rounded-xl border border-gray-300 bg-gray-100 px-4 py-3 text-center text-sm text-gray-500 dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
+                    <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-center text-sm text-gray-500 dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
                       No items added
                     </div>
                   ) : (
                     cartItems.map((item, index) => (
                       <div
                         key={index}
-                        className="flex w-full justify-between gap-2 rounded-2xl border border-gray-200 bg-gray-100 p-2 shadow dark:border-gray-500 dark:bg-gray-800"
+                        className="flex w-full justify-between gap-2 rounded-3xl border border-gray-200 bg-white p-1  dark:border-gray-500 dark:bg-gray-800"
                       >
                         {/* Left: Description & Code */}
-                        <div className="flex w-[60%] flex-col justify-center rounded-xl border bg-gray-100 px-3 py-2 dark:border-gray-500 dark:bg-gray-800">
+                        <div className="flex w-[60%] flex-col justify-center rounded-3xl border bg-white px-3 py-2 dark:border-gray-500 dark:bg-gray-800">
                           <p className="text-sm font-medium text-black dark:text-white">
                             {index + 1}. {item.description} - {item.qty}
                           </p>
-                          <p className="text-sm font-bold text-primary">
+                          <p className="text-sm text-primary">
                             {item.itemCode}
                           </p>
                         </div>
 
                         {/* Right: Prices, QTY, Actions */}
-                        <div className="flex w-[40%] flex-col justify-between rounded-xl border border-gray-200  bg-gray-100 p-2 px-3 py-2 text-right text-sm shadow dark:border-gray-500 dark:bg-gray-800">
+                        <div className="flex w-[40%] flex-col justify-between rounded-3xl border border-gray-200  bg-white p-2 px-3 py-2 text-right text-sm  dark:border-gray-500 dark:bg-gray-800">
                           {/* Prices & Quantity Row */}
                           <div className="text-md flex justify-between font-bold">
                             <span className="text-primary">
                               {item.itemCost?.toFixed(2)}
                             </span>
-                            <span className="text-hover">{item.qty}</span>
+                            <span className="font-bold text-hover">
+                              {item.qty}
+                            </span>
                           </div>
 
                           {/* Action Buttons */}
@@ -697,10 +708,9 @@ function NewTransfer() {
                                 setEditIndex(index);
                                 setShowModal(true);
                               }}
-                              className="flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-500"
+                              className="flex items-center gap-1  rounded-full bg-blue-100 p-2 text-sm text-blue-500 hover:bg-blue-200"
                             >
                               <Edit className="h-4 w-4" />
-                              Edit
                             </button>
                             <button
                               onClick={() => {
@@ -709,10 +719,9 @@ function NewTransfer() {
                                 );
                                 setCartItems(updated);
                               }}
-                              className="flex items-center gap-1 rounded-lg bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-500"
+                              className="flex items-center gap-1  rounded-full bg-red-100 p-2 text-sm text-red-500 hover:bg-red-200"
                             >
                               <Trash2 className="h-4 w-4" />
-                              Remove
                             </button>
                           </div>
                         </div>
@@ -723,11 +732,13 @@ function NewTransfer() {
               </div>
             </div>
 
-            <div className="mt-3 space-y-0">
-              <div className="flex flex-col gap-2 pb-2 sm:flex-row">
-                <div className="relative w-full">
+            <div className="mt-3">
+              {/* Top Grid (Select + Input) */}
+              <div className="grid grid-cols-2 gap-2 pb-3">
+                {/* Select Dropdown */}
+                <div className="relative rounded-2xl border border-gray-200 bg-[#EAF4FE] p-2 py-3 dark:border-gray-500 dark:bg-boxdark-2">
                   <select
-                    className="h-full w-full appearance-none rounded-xl border bg-[#EAF4FE] p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                    className="h-full w-full appearance-none bg-transparent text-gray-700 focus:outline-none dark:text-white"
                     value={newTransfer.toLocation}
                     required
                     name="toLocation"
@@ -748,17 +759,20 @@ function NewTransfer() {
                   <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-gray-200 p-1 text-gray-500 dark:bg-gray-700 dark:text-gray-200" />
                 </div>
 
-                <input
-                  className="w-full  rounded-xl border border-gray-200  bg-[#EAF4FE] p-3 text-gray-500 placeholder-gray-500 transition-all duration-200 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2 dark:placeholder-gray-300"
-                  placeholder="Type Remarks Here"
-                  name="senderRemark"
-                  value={newTransfer.senderRemark}
-                  onChange={handleChange}
-                />
+                {/* Input Field */}
+                <div className="rounded-2xl border border-gray-200 bg-[#EAF4FE] p-2 py-3 dark:border-gray-500 dark:bg-boxdark-2">
+                  <input
+                    className="h-full w-full bg-transparent text-gray-700 placeholder-gray-500 focus:outline-none dark:text-white dark:placeholder-gray-300"
+                    placeholder="Type Remarks Here"
+                    name="senderRemark"
+                    value={newTransfer.senderRemark}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col gap-2 sm:flex-row">
+              {/* Action Buttons Grid */}
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => {
                     setNewTransfer({
@@ -774,18 +788,19 @@ function NewTransfer() {
                     });
                     setCartItems([]);
                   }}
-                  className="text-md flex w-full items-center justify-center gap-2 rounded-xl bg-red-100 py-3 font-bold text-red-500 dark:bg-red-500 dark:text-white"
+                  className="flex  items-center justify-center gap-2 rounded-2xl bg-[#FFE5E5] py-3 font-bold text-red-500 dark:bg-red-500 dark:text-white"
                 >
-                  <CircleX className="cursor-pointer text-red-500 dark:text-white" />
+                  <CircleX className="text-red-500 dark:text-white" />
                   Clear Transfer
                 </button>
+
                 <button
                   type="submit"
                   disabled={loading}
-                  className="text-md flex w-full items-center justify-center gap-2 rounded-xl bg-[#4FB7E4] py-3 font-bold text-white"
+                  className="flex items-center  justify-center gap-2 rounded-2xl bg-[#4FB7E4] py-3 font-bold text-white"
                 >
-                  <Save className="cursor-pointer text-white" />
-                  {loading ? "Transfering..." : "Save Transfer"}
+                  <Save className="text-white" />
+                  {loading ? "Transferring..." : "Save Transfer"}
                 </button>
               </div>
             </div>
@@ -795,7 +810,7 @@ function NewTransfer() {
 
       {showModal && selectedTransfer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-[90%] max-w-md rounded-lg bg-white p-6 text-gray-500 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-200">
+          <div className="w-[90%] max-w-md rounded-3xl bg-white p-6 text-gray-500 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-200">
             <h2 className="mb-2 text-center text-xl font-semibold">
               {selectedTransfer.item.description}
             </h2>
@@ -824,27 +839,112 @@ function NewTransfer() {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex  gap-2">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-md mt-4 rounded-lg bg-hover px-4 py-3 font-bold text-white hover:bg-primary"
+                  className="text-md mt-4 w-full rounded-xl bg-hover px-4 py-3 font-bold text-white hover:bg-primary"
                 >
                   Cancel{" "}
-                  <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2">
+                  <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2 text-xs">
                     Esc
                   </span>
                 </button>
                 <button
                   onClick={handleAddOrEditItem}
-                  className="text-md mt-4 rounded-lg bg-red-500 px-4 py-3 font-bold text-white hover:bg-red-400"
+                  className="text-md mt-4 w-full rounded-xl bg-primary px-4 py-3 font-bold text-white hover:bg-hover"
                 >
                   {editIndex !== null ? "Update" : "Add"}{" "}
-                  <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2">
+                  <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2 text-xs">
                     Enter
                   </span>
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {showBillModal && billTransferData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div
+            className="relative w-[90%] max-w-2xl rounded-3xl bg-white p-6 shadow-lg dark:bg-gray-900"
+            id="bill-content"
+          >
+            <h2 className="mb-4 text-center text-xl font-bold text-gray-700 dark:text-white">
+              Transfer Bill
+            </h2>
+            <div className="mb-4 text-sm text-gray-700 dark:text-gray-200">
+              <p>
+                <strong>Date:</strong> {billTransferData.date}
+              </p>
+              <p>
+                <strong>From:</strong> {billTransferData.fromLocationLabel}
+              </p>
+              <p>
+                <strong>To:</strong> {billTransferData.toLocationLabel}
+              </p>
+              <p>
+                <strong>Remarks:</strong> {billTransferData.senderRemark}
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <table className="w-full table-auto border-collapse text-sm text-gray-800 dark:text-white">
+                <thead>
+                  <tr className="border-b border-gray-300 dark:border-gray-600">
+                    <th className="p-2 text-left">#</th>
+                    <th className="p-2 text-left">Item Code</th>
+                    <th className="p-2 text-left">Qty</th>
+                    <th className="p-2 text-left">Cost</th>
+                    <th className="p-2 text-left">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {billTransferData.cartItems.map((item: any, index: any) => (
+                    <tr
+                      key={index}
+                      className="border-b border-gray-200 dark:border-gray-700"
+                    >
+                      <td className="p-2">{index + 1}</td>
+                      <td className="p-2">{item.itemCode}</td>
+                      <td className="p-2">{item.qty}</td>
+                      <td className="p-2">{item.itemCost?.toFixed(2)}</td>
+                      <td className="p-2">
+                        {(item.qty * item.itemCost).toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td colSpan={4} className="p-2 text-right font-bold">
+                      Total
+                    </td>
+                    <td className="p-2 font-bold">
+                      {billTransferData.cartItems
+                        .reduce(
+                          (sum: any, item: any) =>
+                            sum + item.qty * item.itemCost,
+                          0,
+                        )
+                        .toFixed(2)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-4">
+              <button
+                onClick={() => setShowBillModal(false)}
+                className="w-24 rounded-xl bg-gray-300 px-4 py-2 text-sm font-bold text-black hover:bg-gray-400 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="w-24 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-hover"
+              >
+                Print Bill
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -73,7 +73,7 @@ function Location() {
     description: "",
     city: "",
     contactNumber: "",
-    status: "",
+    status: "ACTIVE",
     locationType: "",
   });
 
@@ -431,14 +431,14 @@ function Location() {
               <input
                 type="text"
                 placeholder="Code"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.code}
                 onChange={(e) => handleFilterChange("code", e.target.value)}
               />
               <input
                 type="text"
                 placeholder="Description"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.description}
                 onChange={(e) =>
                   handleFilterChange("description", e.target.value)
@@ -447,7 +447,7 @@ function Location() {
               <input
                 type="text"
                 placeholder="City"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.city}
                 onChange={(e) => handleFilterChange("city", e.target.value)}
               />
@@ -456,7 +456,7 @@ function Location() {
               <input
                 type="text"
                 placeholder="Mobile"
-                className="w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.contactNumber}
                 onChange={(e) =>
                   handleFilterChange("contactNumber", e.target.value)
@@ -464,7 +464,7 @@ function Location() {
               />
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.locationType}
                   onChange={(e) =>
                     handleFilterChange("locationType", e.target.value)
@@ -481,7 +481,7 @@ function Location() {
               </div>
               <div className="relative w-full">
                 <select
-                  className="w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.status}
                   onChange={(e) => handleFilterChange("status", e.target.value)}
                 >
@@ -531,7 +531,7 @@ function Location() {
         </div>
 
         <div className="mt-4 w-full">
-          <div className="overflow-x-auto rounded-lg shadow-md">
+          <div className="overflow-x-auto rounded-2xl shadow-md">
             <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
               <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -683,7 +683,7 @@ function Location() {
 
         {showModal && selectedLocation && (
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative m-2 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <div className="hide-scrollbar relative m-2 h-[450px] w-full max-w-md overflow-auto rounded-2xl bg-white p-6 shadow-lg">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
@@ -832,14 +832,14 @@ function Location() {
               <div className="mt-4 flex justify-end gap-2">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="rounded bg-gray-500 px-4 py-2 text-sm text-white"
+                  className="rounded-lg bg-gray-500 px-4 py-2 text-sm text-white"
                 >
                   Close
                 </button>
                 {modalMode === "edit" && (
                   <button
                     onClick={handleSaveEdit}
-                    className="rounded bg-primary px-4 py-2 text-sm text-white"
+                    className="rounded-lg bg-primary px-4 py-2 text-sm text-white"
                   >
                     Save
                   </button>
@@ -909,6 +909,9 @@ function Location() {
                   placeholder="Mobile"
                   name="contactNumber"
                   required
+                  pattern="\d{10}"
+                  maxLength={10}
+                  minLength={10}
                   className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
                   value={newLocation.contactNumber}
                   onChange={handleChange}

@@ -249,7 +249,7 @@ function Privilege() {
 
       <div className="grid grid-cols-1">
         <div className="flex flex-col gap-9">
-          <div className="rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+          <div className="rounded-2xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
               <h3 className="font-medium text-black dark:text-white">
                 User Role Task Management
@@ -357,7 +357,7 @@ function Privilege() {
             <div className="flex flex-col gap-4 md:flex-row">
               {/* Unassigned Task Table */}
               <div className="w-full md:w-1/2">
-                <div className="relative overflow-x-auto rounded-lg shadow-md">
+                <div className="relative overflow-x-auto rounded-2xl shadow-md">
                   <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
                     <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                       <tr>
@@ -420,7 +420,7 @@ function Privilege() {
               </div>
               {/* Assigned Task Table */}
               <div className="w-full md:w-1/2">
-                <div className="relative overflow-x-auto rounded-lg shadow-md">
+                <div className="relative overflow-x-auto rounded-2xl shadow-md">
                   <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
                     <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                       <tr>
