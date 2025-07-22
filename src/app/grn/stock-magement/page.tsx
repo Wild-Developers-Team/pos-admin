@@ -513,7 +513,7 @@ function Stock() {
                   stockList.map((stock, idx) => (
                     <tr
                       key={idx}
-                      className="border-b bg-white text-center dark:bg-gray-800"
+                      className="border-b bg-white text-center dark:border-gray-700 dark:bg-gray-800"
                     >
                       <td className="w-[10%] px-6 py-4">
                         <div className="flex items-center justify-center gap-3">
@@ -600,12 +600,12 @@ function Stock() {
         </div>
 
         {showModal && selectedStock && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="hide-scrollbar relative m-2 h-[500px] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="hide-scrollbar relative m-2 h-[500px] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -628,7 +628,7 @@ function Stock() {
               </h2>
 
               <h2 className="text-lg font-semibold">Item Details</h2>
-              <hr className="my-2" />
+              <hr className="my-2 dark:border-gray-500" />
               <p className="mb-2">
                 <strong>Code:</strong>{" "}
                 {selectedStock.item.code || "Unavailable"}
@@ -680,14 +680,14 @@ function Stock() {
               </p>
 
               <h2 className="mt-4 text-lg font-semibold">Other Details</h2>
-              <hr className="my-2" />
+              <hr className="my-2 dark:border-gray-500" />
 
               {modalMode === "edit" ? (
                 <div className="mb-2">
                   <strong>Lable Price:</strong>
                   <input
                     type="number"
-                    className="mt-1 w-full rounded-lg border p-2"
+                    className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={selectedStock.lablePrice}
                     onChange={(e) =>
                       setSelectedStock({
@@ -714,7 +714,7 @@ function Stock() {
                   <strong>Retail Price:</strong>
                   <input
                     type="number"
-                    className="mt-1 w-full rounded-lg border p-2"
+                    className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={selectedStock.retailPrice}
                     onChange={(e) =>
                       setSelectedStock({
@@ -736,7 +736,7 @@ function Stock() {
                   <strong>Wholesale Price:</strong>
                   <input
                     type="number"
-                    className="mt-1 w-full rounded-lg border p-2"
+                    className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={selectedStock.wholesalePrice}
                     onChange={(e) =>
                       setSelectedStock({
@@ -768,7 +768,7 @@ function Stock() {
                   <strong>Quantity:</strong>
                   <input
                     type="number"
-                    className="mt-1 w-full rounded-lg border p-2"
+                    className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={selectedStock.qty}
                     onChange={(e) =>
                       setSelectedStock({
@@ -820,7 +820,7 @@ function Stock() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedStock.status}
                       onChange={(e) =>
                         setSelectedStock({

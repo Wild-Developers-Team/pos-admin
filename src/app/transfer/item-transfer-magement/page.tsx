@@ -725,7 +725,7 @@ function NewTransfer() {
                                 setEditIndex(index);
                                 setShowModal(true);
                               }}
-                              className="flex items-center gap-1  rounded-full bg-blue-100 p-2 text-sm text-blue-500 hover:bg-blue-200"
+                              className="flex items-center gap-1  rounded-full bg-blue-100 p-2 text-sm text-blue-500 hover:bg-blue-200 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-400"
                             >
                               <Edit className="h-4 w-4" />
                             </button>
@@ -736,7 +736,7 @@ function NewTransfer() {
                                 );
                                 setCartItems(updated);
                               }}
-                              className="flex items-center gap-1  rounded-full bg-red-100 p-2 text-sm text-red-500 hover:bg-red-200"
+                              className="flex items-center gap-1  rounded-full bg-red-100 p-2 text-sm text-red-500 hover:bg-red-200 dark:bg-red-500 dark:text-white dark:hover:bg-red-400"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -755,7 +755,7 @@ function NewTransfer() {
                 {/* Select Dropdown */}
                 <div className="relative rounded-2xl border border-gray-200 bg-[#EAF4FE] p-2 py-3 dark:border-gray-500 dark:bg-boxdark-2">
                   <select
-                    className="h-full w-full appearance-none bg-transparent text-gray-700 focus:outline-none dark:text-white"
+                    className="h-full w-full appearance-none bg-[#EAF4FE] text-gray-700  focus:outline-none dark:bg-boxdark-2 dark:text-white"
                     value={newTransfer.toLocation}
                     required
                     name="toLocation"
@@ -852,7 +852,7 @@ function NewTransfer() {
               <strong>Item Code :</strong> {selectedTransfer.item.code}
             </p>
 
-            <hr />
+            <hr className="dark:border-gray-500" />
             <form>
               <div className="mb-4 mt-4">
                 <div className="flex-col justify-center">
@@ -865,7 +865,7 @@ function NewTransfer() {
                         required
                         value={modalItem.qty}
                         onChange={handleModalInputChange}
-                        className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                        className="mb-2 mt-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       />
                     </div>
                   </div>
@@ -874,7 +874,7 @@ function NewTransfer() {
               <div className="flex  gap-2">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-md mt-4 w-full rounded-xl bg-hover px-4 py-3 font-bold text-white hover:bg-primary"
+                  className="text-md mt-4 w-full rounded-xl bg-gray-500 px-4 py-3 font-bold text-white hover:bg-gray-600"
                 >
                   Cancel{" "}
                   <span className="ml-2 inline rounded-md bg-black-2 p-1 px-2 text-xs">

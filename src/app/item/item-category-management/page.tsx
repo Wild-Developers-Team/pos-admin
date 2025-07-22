@@ -456,13 +456,13 @@ function Category() {
             <div className="flex items-center gap-2">
               <button
                 onClick={applyFilters}
-                className="rounded-lg w-20 border border-primary bg-primary px-4 py-1.5 text-sm font-medium text-white hover:bg-hover"
+                className="w-20 rounded-lg border border-primary bg-primary px-4 py-1.5 text-sm font-medium text-white hover:bg-hover"
               >
                 Search
               </button>
               <button
                 onClick={resetFilters}
-                className="rounded-lg w-20 border border-gray-500 bg-gray-500 px-4 py-1.5 text-sm font-medium text-white hover:border-gray-400 hover:bg-gray-400"
+                className="w-20 rounded-lg border border-gray-500 bg-gray-500 px-4 py-1.5 text-sm font-medium text-white hover:border-gray-400 hover:bg-gray-400"
               >
                 Reset
               </button>
@@ -517,7 +517,7 @@ function Category() {
                   categoryList.map((item, idx) => (
                     <tr
                       key={idx}
-                      className="border-b bg-white text-center dark:bg-gray-800"
+                      className="border-b bg-white text-center dark:border-gray-700 dark:bg-gray-800"
                     >
                       <td className="w-[10%] px-6 py-4">
                         <div className="flex items-center justify-center gap-3">
@@ -552,9 +552,7 @@ function Category() {
                         </div>
                       </td>
                       <td className="w-[30%] px-6 py-4">{item.code}</td>
-                      <td className="w-[50%] px-6 py-4">
-                        {item.description}
-                      </td>
+                      <td className="w-[50%] px-6 py-4">{item.description}</td>
                       <td className="w-[10%] px-6 py-4">
                         <span
                           className={`rounded-full px-2.5 py-1 text-xs font-medium ${
@@ -606,12 +604,12 @@ function Category() {
         </div>
 
         {showModal && selectedCategory && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -641,7 +639,7 @@ function Category() {
                   <strong>Description:</strong>
                   <input
                     type="text"
-                    className="mt-1 w-full rounded-lg border p-2"
+                    className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900 "
                     value={selectedCategory.description}
                     onChange={(e) =>
                       setSelectedCategory({
@@ -663,7 +661,7 @@ function Category() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2  focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedCategory.status}
                       onChange={(e) =>
                         setSelectedCategory({
@@ -701,14 +699,14 @@ function Category() {
               <div className="mt-4 flex justify-end gap-2">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="rounded-lg w-20 bg-gray-500 px-4 py-2 text-sm text-white"
+                  className="w-20 rounded-lg bg-gray-500 px-4 py-2 text-sm text-white"
                 >
                   Close
                 </button>
                 {modalMode === "edit" && (
                   <button
                     onClick={handleSaveEdit}
-                    className="rounded-lg w-20 bg-primary px-4 py-2 text-sm text-white"
+                    className="w-20 rounded-lg bg-primary px-4 py-2 text-sm text-white"
                   >
                     Save
                   </button>
@@ -720,12 +718,12 @@ function Category() {
 
         {/* Add user modal  */}
         {showAddModal && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg dark:bg-gray-800 text-gray-600 dark:text-gray-300 dark:border dark:border-gray-500">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowAddModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -752,7 +750,7 @@ function Category() {
                   onChange={handleChange}
                   required
                   pattern="^\S+$"
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
                   value={newCategory.code}
                 />
                 <input
@@ -760,14 +758,14 @@ function Category() {
                   placeholder="Description"
                   name="description"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
                   value={newCategory.description}
                   onChange={handleChange}
                 />
 
                 <div className="relative">
                   <select
-                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
                     value={newCategory.status}
                     name="status"
                     onChange={(e) =>
@@ -784,7 +782,7 @@ function Category() {
                   <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
                 </div>
 
-                <div className="flex justify-end gap-2">
+                <div className="mt-2 flex justify-end gap-2">
                   <button
                     type="submit"
                     disabled={loading}

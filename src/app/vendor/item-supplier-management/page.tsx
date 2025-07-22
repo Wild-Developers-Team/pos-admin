@@ -653,7 +653,7 @@ function Supplier() {
                   supplierList.map((item, idx) => (
                     <tr
                       key={idx}
-                      className="border-b bg-white text-center dark:bg-gray-800"
+                      className="border-b bg-white text-center dark:border-gray-700 dark:bg-gray-800"
                     >
                       <td className="w-[10%] px-6 py-4">
                         <div className="flex items-center justify-center gap-3">
@@ -751,12 +751,12 @@ function Supplier() {
         </div>
 
         {showModal && selectedSupplier && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative max-h-[500px] hide-scrollbar w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg m-2">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 ">
+            <div className="hide-scrollbar relative m-2 max-h-[500px] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -786,7 +786,7 @@ function Supplier() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedSupplier.title}
                       onChange={(e) =>
                         setSelectedSupplier({
@@ -817,7 +817,7 @@ function Supplier() {
                     <strong>First Name:</strong>
                     <input
                       type="text"
-                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedSupplier.firstName}
                       onChange={(e) =>
                         setSelectedSupplier({
@@ -840,7 +840,7 @@ function Supplier() {
                     <strong>Last Name:</strong>
                     <input
                       type="text"
-                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedSupplier.lastName}
                       onChange={(e) =>
                         setSelectedSupplier({
@@ -863,7 +863,7 @@ function Supplier() {
                     <strong>Mobile:</strong>
                     <input
                       type="text"
-                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedSupplier.primaryMobile}
                       onChange={(e) =>
                         setSelectedSupplier({
@@ -886,7 +886,7 @@ function Supplier() {
                     <strong>Email:</strong>
                     <input
                       type="email"
-                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedSupplier.primaryEmail}
                       onChange={(e) =>
                         setSelectedSupplier({
@@ -909,7 +909,7 @@ function Supplier() {
                     <strong>Comapny:</strong>
                     <input
                       type="text"
-                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedSupplier.company}
                       onChange={(e) =>
                         setSelectedSupplier({
@@ -932,7 +932,7 @@ function Supplier() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedSupplier.status}
                       onChange={(e) =>
                         setSelectedSupplier({
@@ -980,12 +980,12 @@ function Supplier() {
 
         {/* Add user modal  */}
         {showAddModal && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative max-h-[500px] hide-scrollbar w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg m-2">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="hide-scrollbar relative m-2 max-h-[500px] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowAddModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -1007,7 +1007,7 @@ function Supplier() {
               <form onSubmit={handleSubmit}>
                 <div className="relative">
                   <select
-                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={newSupplier.title}
                     required
                     name="title"
@@ -1030,7 +1030,7 @@ function Supplier() {
                   name="firstName"
                   pattern="[A-Za-z]+"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newSupplier.firstName}
                   onChange={handleChange}
                 />
@@ -1040,7 +1040,7 @@ function Supplier() {
                   name="lastName"
                   pattern="[A-Za-z]+"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newSupplier.lastName}
                   onChange={handleChange}
                 />
@@ -1049,7 +1049,7 @@ function Supplier() {
                   placeholder="Email"
                   name="primaryEmail"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newSupplier.primaryEmail}
                   onChange={handleChange}
                 />
@@ -1061,7 +1061,7 @@ function Supplier() {
                   pattern="\d{10}"
                   maxLength={10}
                   minLength={10}
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newSupplier.primaryMobile}
                   onChange={handleChange}
                 />
@@ -1070,13 +1070,13 @@ function Supplier() {
                   placeholder="Company"
                   name="company"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newSupplier.company}
                   onChange={handleChange}
                 />
                 <div className="relative">
                   <select
-                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={newSupplier.status}
                     required
                     name="status"
@@ -1094,7 +1094,7 @@ function Supplier() {
                   <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
                 </div>
 
-                <div className="flex justify-end gap-2">
+                <div className="mt-2 flex justify-end gap-2">
                   <button
                     type="submit"
                     disabled={loading}

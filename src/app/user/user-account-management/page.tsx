@@ -627,17 +627,7 @@ function UserAccount() {
                   }
                 />
               </div>
-              <div className="mb-1 w-full xl:w-1/3">
-                <input
-                  type="text"
-                  placeholder="User role"
-                  className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
-                  value={selectedFilters.userRole}
-                  onChange={(e) =>
-                    handleFilterChange("userRole", e.target.value)
-                  }
-                />
-              </div>
+
               <div className="mb-1 w-full xl:w-1/3">
                 <input
                   type="text"
@@ -645,6 +635,15 @@ function UserAccount() {
                   className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                   value={selectedFilters.nic}
                   onChange={(e) => handleFilterChange("nic", e.target.value)}
+                />
+              </div>
+              <div className="mb-1 w-full xl:w-1/3">
+                <input
+                  type="text"
+                  placeholder="Mobile"
+                  className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                  value={selectedFilters.mobile}
+                  onChange={(e) => handleFilterChange("mobile", e.target.value)}
                 />
               </div>
             </div>
@@ -658,15 +657,7 @@ function UserAccount() {
                   onChange={(e) => handleFilterChange("email", e.target.value)}
                 />
               </div>
-              <div className="mb-1 w-full xl:w-1/3">
-                <input
-                  type="text"
-                  placeholder="Mobile"
-                  className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
-                  value={selectedFilters.mobile}
-                  onChange={(e) => handleFilterChange("mobile", e.target.value)}
-                />
-              </div>
+
               <div className="mb-1 w-full xl:w-1/3">
                 <input
                   type="text"
@@ -678,8 +669,6 @@ function UserAccount() {
                   }
                 />
               </div>
-            </div>
-            <div className="col mb-1 gap-4 md:flex">
               <div className="mb-1 w-full xl:w-1/3">
                 <input
                   type="text"
@@ -690,6 +679,27 @@ function UserAccount() {
                     handleFilterChange("lastName", e.target.value)
                   }
                 />
+              </div>
+            </div>
+            <div className="col mb-1 gap-4 md:flex">
+              <div className="mb-1 w-full xl:w-1/3">
+                <div className="relative w-full">
+                  <select
+                    className="w-full appearance-none rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                    value={selectedFilters.userRole}
+                    onChange={(e) =>
+                      handleFilterChange("userRole", e.target.value)
+                    }
+                  >
+                    <option value="">User Role</option>
+                    {userRole.map((user) => (
+                      <option key={user.code} value={user.code}>
+                        {user.description}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
+                </div>
               </div>
               <div className="mb-1 w-full xl:w-1/3">
                 <div className="relative w-full">
@@ -812,7 +822,7 @@ function UserAccount() {
                   userList.map((item, idx) => (
                     <tr
                       key={idx}
-                      className="border-b bg-white text-center dark:bg-gray-800"
+                      className="border-b bg-white text-center dark:border-gray-700 dark:bg-gray-800"
                     >
                       <td className="w-[10%] px-6 py-4">
                         <div className="flex items-center justify-center gap-3">
@@ -903,12 +913,12 @@ function UserAccount() {
         </div>
 
         {showModal && selectedUser && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="hide-scrollbar relative m-2 max-h-[500px] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="hide-scrollbar relative m-2 max-h-[500px] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -952,7 +962,7 @@ function UserAccount() {
                     <strong>Email:</strong>
                     <input
                       type="text"
-                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedUser.email}
                       onChange={(e) =>
                         setSelectedUser({
@@ -975,7 +985,7 @@ function UserAccount() {
                     <strong>First Name:</strong>
                     <input
                       type="text"
-                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedUser.firstName}
                       onChange={(e) =>
                         setSelectedUser({
@@ -998,7 +1008,7 @@ function UserAccount() {
                     <strong>Last Name:</strong>
                     <input
                       type="text"
-                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedUser.lastName}
                       onChange={(e) =>
                         setSelectedUser({
@@ -1021,7 +1031,7 @@ function UserAccount() {
                     <strong>NIC:</strong>
                     <input
                       type="text"
-                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedUser.nic}
                       onChange={(e) =>
                         setSelectedUser({
@@ -1044,7 +1054,7 @@ function UserAccount() {
                     <strong>Mobile:</strong>
                     <input
                       type="text"
-                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedUser.mobile}
                       onChange={(e) =>
                         setSelectedUser({
@@ -1067,7 +1077,7 @@ function UserAccount() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedUser.status}
                       onChange={(e) =>
                         setSelectedUser({
@@ -1130,12 +1140,12 @@ function UserAccount() {
 
         {/* Add user modal  */}
         {showAddModal && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="hide-scrollbar relative m-2 max-h-[500px] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="hide-scrollbar relative m-2 max-h-[500px] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowAddModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -1170,7 +1180,7 @@ function UserAccount() {
                       <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm0 16a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm1-5.034V12a1 1 0 0 1-2 0v-1.418a1 1 0 0 1 1.038-.999 1.436 1.436 0 0 0 1.488-1.441 1.501 1.501 0 1 0-3-.116.986.986 0 0 1-1.037.961 1 1 0 0 1-.96-1.037A3.5 3.5 0 1 1 11 11.466Z" />
                     </svg>
                     {showTooltipNew && (
-                      <div className="absolute right-0 z-10 mt-2 w-72 whitespace-pre-wrap rounded-md bg-gray-800 px-4 py-2 text-sm text-white shadow-lg">
+                      <div className="absolute right-0 z-10 mt-2 w-72 whitespace-pre-wrap rounded-xl bg-gray-800 px-4 py-2 text-sm text-white shadow-lg dark:bg-gray-700">
                         {getUsernamePolicyTooltip()}
                       </div>
                     )}
@@ -1183,7 +1193,7 @@ function UserAccount() {
                   onChange={handleChange}
                   pattern="^\S+$"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newUser.newUsername}
                 />
                 <input
@@ -1192,7 +1202,7 @@ function UserAccount() {
                   name="firstName"
                   pattern="[A-Za-z]+"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newUser.firstName}
                   onChange={handleChange}
                 />
@@ -1202,7 +1212,7 @@ function UserAccount() {
                   name="lastName"
                   pattern="[A-Za-z]+"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newUser.lastName}
                   onChange={handleChange}
                 />
@@ -1211,7 +1221,7 @@ function UserAccount() {
                   placeholder="NIC"
                   name="nic"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newUser.nic}
                   onChange={handleChange}
                 />
@@ -1220,7 +1230,7 @@ function UserAccount() {
                   placeholder="Email"
                   name="email"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newUser.email}
                   onChange={handleChange}
                 />
@@ -1232,14 +1242,14 @@ function UserAccount() {
                   pattern="\d{10}"
                   maxLength={10}
                   minLength={10}
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newUser.mobile}
                   onChange={handleChange}
                 />
 
                 <div className="relative">
                   <select
-                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={newUser.userRole}
                     required
                     name="userRole"

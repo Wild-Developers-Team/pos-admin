@@ -39,7 +39,7 @@ function Profile() {
     <DefaultLayout>
      <div className="mx-auto max-w-242.5">
         <Breadcrumb pageName="Profile" />
-        <div className="overflow-hidden rounded-lg border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div className="overflow-hidden rounded-2xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="relative z-20 h-35 md:h-65">
             {/* Transparent overlay */}
             <div className="absolute inset-0 z-10 rounded-tl-sm rounded-tr-sm bg-black bg-opacity-20"></div>
@@ -90,7 +90,7 @@ function Profile() {
                 </span>
               )}
 
-              <div className="mx-auto mb-5.5 mt-4.5 grid max-w-94 grid-cols-2 rounded-md border border-stroke py-2.5 shadow-1 dark:border-strokedark dark:bg-[#37404F]">
+              <div className="mx-auto mb-5.5 mt-4.5 grid max-w-94 grid-cols-2 rounded-xl border border-stroke py-2.5 shadow-1 dark:border-strokedark dark:bg-[#37404F]">
                 <div className="items-center justify-center gap-1 border-r border-stroke px-4 dark:border-strokedark">
                   <span className="block text-sm font-semibold text-black dark:text-white">
                     {userProfile.lastLoggedDate}

@@ -517,7 +517,7 @@ function Brand() {
                   brandList.map((item, idx) => (
                     <tr
                       key={idx}
-                      className="border-b bg-white text-center dark:bg-gray-800"
+                      className="border-b bg-white text-center dark:border-gray-700 dark:bg-gray-800"
                     >
                       <td className="w-[10%] px-6 py-4">
                         <div className="flex items-center justify-center gap-3">
@@ -604,12 +604,12 @@ function Brand() {
         </div>
 
         {showModal && selectedBrand && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -639,7 +639,7 @@ function Brand() {
                   <strong>Description:</strong>
                   <input
                     type="text"
-                    className="mt-1 w-full rounded-lg border p-2"
+                    className="mt-1 w-full rounded-lg border p-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
                     value={selectedBrand.description}
                     onChange={(e) =>
                       setSelectedBrand({
@@ -661,7 +661,7 @@ function Brand() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedBrand.status}
                       onChange={(e) =>
                         setSelectedBrand({
@@ -720,12 +720,12 @@ function Brand() {
 
         {/* Add user modal  */}
         {showAddModal && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg dark:bg-gray-800 text-gray-600 dark:text-gray-300 dark:border dark:border-gray-500">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowAddModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -752,7 +752,7 @@ function Brand() {
                   onChange={handleChange}
                   required
                   pattern="^\S+$"
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
                   value={newBrand.code}
                 />
                 <input
@@ -760,14 +760,14 @@ function Brand() {
                   placeholder="Description"
                   name="description"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
                   value={newBrand.description}
                   onChange={handleChange}
                 />
 
                 <div className="relative">
                   <select
-                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
                     value={newBrand.status}
                     name="status"
                     onChange={(e) =>

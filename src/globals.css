@@ -1,8 +1,13 @@
 .swal2-container {
   z-index: 99999 !important; /* Always on top */
 }
+
+.swal2-popup {
+  border-radius: 18px !important;
+}
+
 .swal-custom-button {
-  background-color: #2979ff !important;
+  background-color: #4fb7e4 !important;
   color: white !important;
   border-radius: 8px !important;
   padding: 10px 20px !important;
@@ -13,7 +18,7 @@
 }
 
 .swal-custom-button:hover {
-  background-color: #1e88e5 !important;
+  background-color: #3aa2cc !important;
 }
 
 /* Custom Scrollbar */
@@ -117,3 +122,15 @@
     display: none !important;
   }
 } */
+
+
+/* Hide number input arrows */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner {
+  -moz-appearance: textfield; /* Firefox */
+}

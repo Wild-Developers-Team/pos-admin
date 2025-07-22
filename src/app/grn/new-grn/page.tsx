@@ -1161,7 +1161,7 @@ function NewGRN() {
                                   setEditIndex(index);
                                   setShowModal(true);
                                 }}
-                                className="flex items-center gap-1  rounded-full bg-blue-100 p-2 text-sm text-blue-500 hover:bg-blue-200"
+                                className="flex items-center gap-1  rounded-full bg-blue-100 p-2 text-sm text-blue-500 hover:bg-blue-200 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-400"
                               >
                                 <Edit className="h-4 w-4" />
                               </button>
@@ -1172,7 +1172,7 @@ function NewGRN() {
                                   );
                                   setCartItems(updated);
                                 }}
-                                className="flex items-center gap-1  rounded-full bg-red-100 p-2 text-sm text-red-500 hover:bg-red-200"
+                                className="flex items-center gap-1  rounded-full bg-red-100 p-2 text-sm text-red-500 hover:bg-red-200 dark:bg-red-500 dark:text-white dark:hover:bg-red-400"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </button>
@@ -1228,7 +1228,7 @@ function NewGRN() {
                       id="paid"
                       value={paidAmount}
                       onChange={handlePaidChange}
-                      className="w-32 rounded-xl border  bg-white p-2 text-right font-semibold text-gray-900 transition-all duration-200 focus:outline-none dark:border-gray-500 dark:bg-gray-800"
+                      className="no-spinner w-32 rounded-xl border bg-white p-2 text-right font-semibold text-gray-900 transition-all duration-200 focus:outline-none dark:border-gray-500 dark:bg-gray-800 dark:text-gray-200"
                     />
                   </div>
 
@@ -1243,7 +1243,7 @@ function NewGRN() {
 
               <div className="flex flex-col gap-2 pb-2 sm:flex-row">
                 <input
-                  className="w-full resize-y rounded-xl border border-gray-200 bg-white  p-3 text-gray-500 placeholder-gray-500 transition-all duration-200 focus:outline-none dark:border-gray-500 dark:bg-gray-900 dark:placeholder-gray-300"
+                  className="w-full resize-y rounded-xl border border-gray-200 bg-white  p-3 text-gray-500 placeholder-gray-500 transition-all duration-200 focus:outline-none dark:border-gray-500 dark:bg-gray-900 dark:text-gray-200 dark:placeholder-gray-300"
                   placeholder="Type Remarks Here"
                   name="remark"
                   value={newGRN.remark}
@@ -1281,7 +1281,28 @@ function NewGRN() {
 
       {showModal && selectedGRN && (
         <div className="fixed inset-0 z-999 flex items-center justify-center bg-black  bg-opacity-50">
-          <div className="w-[90%] max-w-xl rounded-3xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
+          <div className="relative m-2 w-[90%] max-w-xl rounded-3xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
+            {/* Close Icon Top-Right */}
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
+            >
+              <span className="sr-only">Close</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
             <h2 className="mb-2 text-center text-xl font-semibold">
               {selectedGRN.description}
             </h2>
@@ -1292,7 +1313,7 @@ function NewGRN() {
                 {selectedGRN.code}
               </span>
             </p>
-            <hr />
+            <hr className="dark:border-gray-500" />
             <form>
               <div className="mb-4 mt-4">
                 <div className="flex-col justify-center">
@@ -1305,7 +1326,7 @@ function NewGRN() {
                         required
                         value={modalItem.lablePrice}
                         onChange={handleModalInputChange}
-                        className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                        className="mb-2 mt-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       />
                     </div>
                     <div className="w-1/2">
@@ -1316,7 +1337,7 @@ function NewGRN() {
                         required
                         value={modalItem.itemCost}
                         onChange={handleModalInputChange}
-                        className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                        className="mb-2 mt-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       />
                     </div>
                   </div>
@@ -1330,7 +1351,7 @@ function NewGRN() {
                         required
                         value={modalItem.salePrice}
                         onChange={handleModalInputChange}
-                        className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                        className="mb-2 mt-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       />
                     </div>
                     <div className="w-1/2">
@@ -1341,7 +1362,7 @@ function NewGRN() {
                         required
                         value={modalItem.wholesalePrice}
                         onChange={handleModalInputChange}
-                        className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                        className="mb-2 mt-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       />
                     </div>
                   </div>
@@ -1353,7 +1374,7 @@ function NewGRN() {
                         name="customerDiscount"
                         value={modalItem.customerDiscount}
                         onChange={handleModalInputChange}
-                        className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                        className="mb-2 mt-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       />
                     </div>
                     <div className="w-1/2">
@@ -1363,7 +1384,7 @@ function NewGRN() {
                         name="wholesaleDiscount"
                         value={modalItem.wholesaleDiscount}
                         onChange={handleModalInputChange}
-                        className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                        className="mb-2 mt-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       />
                     </div>
                   </div>
@@ -1376,7 +1397,7 @@ function NewGRN() {
                         required
                         value={modalItem.qty}
                         onChange={handleModalInputChange}
-                        className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                        className="mb-2 mt-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       />
                     </div>
                   </div>
@@ -1408,7 +1429,28 @@ function NewGRN() {
       )}
       {showViewModal && selectedViewGRN && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-4xl rounded-3xl bg-white p-6 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800">
+          <div className="relative m-2 w-full max-w-4xl rounded-3xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
+            {/* Close Icon Top-Right */}
+            <button
+              onClick={() => setShowViewModal(false)}
+              className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
+            >
+              <span className="sr-only">Close</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
             <h2 className="mb-4 text-xl font-bold text-primary">
               {selectedViewGRN[0]?.item?.description}
             </h2>
@@ -1513,7 +1555,7 @@ function NewGRN() {
                       <td className="px-4 py-2">
                         {selectedViewGRN.reduce((sum, g) => sum + g.qty, 0)}
                       </td>
-                      <td className="px-4 py-2 text-blue-600">
+                      <td className="px-4 py-2 text-blue-600 dark:text-blue-400">
                         Profit:{" "}
                         {selectedViewGRN
                           .reduce(
@@ -1544,14 +1586,35 @@ function NewGRN() {
       )}
       {editModalVisible && selectedGRN && (
         <div className="fixed inset-0 z-50 flex  items-center justify-center bg-black bg-opacity-50">
-          <div className="hide-scrollbar h-150 w-full max-w-md overflow-y-auto rounded-3xl bg-white p-6 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800">
+          <div className="relative m-2 w-full max-w-md rounded-3xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
+            {/* Close Icon Top-Right */}
+            <button
+              onClick={() => setEditModalVisible(false)}
+              className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
+            >
+              <span className="sr-only">Close</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
             <h2 className="mb-4 text-lg font-semibold text-primary">
               Edit GRN Stock
             </h2>
 
             <div className="space-y-3 text-sm">
               <div>
-                <label className="block text-gray-700 dark:text-gray-200">
+                <label className="mb-2 block text-gray-700 dark:text-gray-200">
                   Lable Price
                 </label>
                 <input
@@ -1567,7 +1630,7 @@ function NewGRN() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 dark:text-gray-200">
+                <label className="mb-2 block text-gray-700 dark:text-gray-200">
                   Item Cost
                 </label>
                 <input
@@ -1583,7 +1646,7 @@ function NewGRN() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 dark:text-gray-200">
+                <label className="mb-2 block text-gray-700 dark:text-gray-200">
                   Retail Price
                 </label>
                 <input
@@ -1599,7 +1662,7 @@ function NewGRN() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 dark:text-gray-200">
+                <label className="mb-2 block text-gray-700 dark:text-gray-200">
                   Wholesale Price
                 </label>
                 <input
@@ -1615,7 +1678,7 @@ function NewGRN() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 dark:text-gray-200">
+                <label className="mb-2 block text-gray-700 dark:text-gray-200">
                   Retail Discount
                 </label>
                 <input
@@ -1631,7 +1694,7 @@ function NewGRN() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 dark:text-gray-200">
+                <label className="mb-2 block text-gray-700 dark:text-gray-200">
                   Wholesale Discount
                 </label>
                 <input
@@ -1647,7 +1710,7 @@ function NewGRN() {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 dark:text-gray-200">
+                <label className="mb-2 block text-gray-700 dark:text-gray-200">
                   Quantity
                 </label>
                 <input
@@ -1689,12 +1752,12 @@ function NewGRN() {
 
       {/* Register Item  */}
       {showRegisterItemModal && (
-        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-          <div className="relative m-2 w-full max-w-md rounded-3xl bg-white p-6 shadow-lg">
+        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="relative m-2 w-full max-w-md rounded-3xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
             {/* Close Icon Top-Right */}
             <button
               onClick={() => setShowRegisterItemModal(false)}
-              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+              className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
             >
               <span className="sr-only">Close</span>
               <svg
@@ -1721,7 +1784,7 @@ function NewGRN() {
                 onChange={handleItemChange}
                 required
                 pattern="^\S+$"
-                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                 value={newItem.code}
               />
               <input
@@ -1729,13 +1792,13 @@ function NewGRN() {
                 placeholder="Name"
                 name="description"
                 required
-                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                 value={newItem.description}
                 onChange={handleItemChange}
               />
               <div className="relative">
                 <select
-                  className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newItem.category}
                   name="category"
                   onChange={(e) =>
@@ -1753,7 +1816,7 @@ function NewGRN() {
               </div>
               <div className="relative">
                 <select
-                  className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newItem.brand}
                   name="brand"
                   onChange={(e) =>
@@ -1771,7 +1834,7 @@ function NewGRN() {
               </div>
               <div className="relative">
                 <select
-                  className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newItem.unit}
                   name="unit"
                   onChange={(e) =>
@@ -1790,7 +1853,7 @@ function NewGRN() {
 
               <div className="relative mb-4">
                 <select
-                  className="w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                  className="w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newItem.status}
                   name="status"
                   onChange={(e) =>
@@ -1827,12 +1890,12 @@ function NewGRN() {
       )}
 
       {showCategoryModal && (
-        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-          <div className="relative m-2 w-full max-w-md rounded-3xl bg-white p-6 shadow-lg">
+        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="relative m-2 w-full max-w-md rounded-3xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
             {/* Close Icon Top-Right */}
             <button
               onClick={() => setShowCategoryModal(false)}
-              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+              className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
             >
               <span className="sr-only">Close</span>
               <svg
@@ -1859,7 +1922,7 @@ function NewGRN() {
                 onChange={handleCategoryChange}
                 required
                 pattern="^\S+$"
-                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                 value={newCategory.code}
               />
               <input
@@ -1867,14 +1930,14 @@ function NewGRN() {
                 placeholder="Name"
                 name="description"
                 required
-                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                 value={newCategory.description}
                 onChange={handleCategoryChange}
               />
 
               <div className="relative">
                 <select
-                  className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newCategory.status}
                   name="status"
                   onChange={(e) =>

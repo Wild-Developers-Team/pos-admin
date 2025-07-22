@@ -661,7 +661,7 @@ function Item() {
                   itemList.map((item, idx) => (
                     <tr
                       key={idx}
-                      className="border-b bg-white text-center dark:bg-gray-800"
+                      className="border-b bg-white text-center dark:border-gray-700 dark:bg-gray-800"
                     >
                       <td className="w-[10%] px-6 py-4">
                         <div className="flex items-center justify-center gap-3">
@@ -750,12 +750,12 @@ function Item() {
         </div>
 
         {showModal && selectedItem && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -785,7 +785,7 @@ function Item() {
                   <strong>Description:</strong>
                   <input
                     type="text"
-                    className="mt-1 w-full rounded-lg border p-2"
+                    className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={selectedItem.description}
                     onChange={(e) =>
                       setSelectedItem({
@@ -807,7 +807,7 @@ function Item() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedItem.category}
                       onChange={(e) =>
                         setSelectedItem({
@@ -827,7 +827,7 @@ function Item() {
                 </div>
               ) : (
                 <p className="mb-2">
-                  <strong>Category:</strong> {selectedItem.category}
+                  <strong>Category:</strong> {selectedItem.category.description}
                 </p>
               )}
 
@@ -837,7 +837,7 @@ function Item() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedItem.brand}
                       onChange={(e) =>
                         setSelectedItem({
@@ -857,7 +857,7 @@ function Item() {
                 </div>
               ) : (
                 <p className="mb-2">
-                  <strong>Brand:</strong> {selectedItem.brand}
+                  <strong>Brand:</strong> {selectedItem.brand.description}
                 </p>
               )}
 
@@ -867,7 +867,7 @@ function Item() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedItem.status}
                       onChange={(e) =>
                         setSelectedItem({
@@ -916,12 +916,12 @@ function Item() {
 
         {/* Add  modal  */}
         {showAddModal && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 ">
+            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowAddModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -949,7 +949,7 @@ function Item() {
                   required
                   disabled
                   pattern="^\S+$"
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newItem.code}
                 />
                 <input
@@ -957,13 +957,13 @@ function Item() {
                   placeholder="Name"
                   name="description"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newItem.description}
                   onChange={handleChange}
                 />
                 <div className="relative">
                   <select
-                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={newItem.category}
                     name="category"
                     onChange={(e) =>
@@ -981,7 +981,7 @@ function Item() {
                 </div>
                 <div className="relative">
                   <select
-                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={newItem.brand}
                     name="brand"
                     onChange={(e) =>
@@ -999,7 +999,7 @@ function Item() {
                 </div>
                 <div className="relative">
                   <select
-                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={newItem.unit}
                     name="unit"
                     onChange={(e) =>
@@ -1018,7 +1018,7 @@ function Item() {
 
                 <div className="relative mb-4">
                   <select
-                    className="w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={newItem.status}
                     name="status"
                     onChange={(e) =>

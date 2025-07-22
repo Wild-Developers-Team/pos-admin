@@ -593,7 +593,7 @@ function Location() {
                   locationList.map((item, idx) => (
                     <tr
                       key={idx}
-                      className="border-b bg-white text-center dark:bg-gray-800"
+                      className="border-b bg-white text-center dark:border-gray-700 dark:bg-gray-800"
                     >
                       <td className="w-[10%] px-6 py-4">
                         <div className="flex items-center justify-center gap-3">
@@ -682,12 +682,12 @@ function Location() {
         </div>
 
         {showModal && selectedLocation && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="hide-scrollbar relative m-2 h-[450px] w-full max-w-md overflow-auto rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="hide-scrollbar relative m-2 h-[450px] w-full max-w-md overflow-auto rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -718,7 +718,7 @@ function Location() {
                   <strong>Description:</strong>
                   <input
                     type="text"
-                    className="mt-1 w-full rounded-lg border p-2"
+                    className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={selectedLocation.description}
                     onChange={(e) =>
                       setSelectedLocation({
@@ -744,7 +744,7 @@ function Location() {
                   <strong>City:</strong>
                   <input
                     type="text"
-                    className="mt-1 w-full rounded-lg border p-2"
+                    className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={selectedLocation.city}
                     onChange={(e) =>
                       setSelectedLocation({
@@ -765,7 +765,7 @@ function Location() {
                   <strong>Mobile:</strong>
                   <input
                     type="text"
-                    className="mt-1 w-full rounded-lg border p-2"
+                    className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={selectedLocation.contactNumber}
                     onChange={(e) =>
                       setSelectedLocation({
@@ -787,7 +787,7 @@ function Location() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={selectedLocation.status}
                       onChange={(e) =>
                         setSelectedLocation({
@@ -851,12 +851,12 @@ function Location() {
 
         {/* Add  modal  */}
         {showAddModal && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="relative m-2 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowAddModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -883,7 +883,7 @@ function Location() {
                   onChange={handleChange}
                   required
                   pattern="^\S+$"
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newLocation.code}
                 />
                 <input
@@ -891,7 +891,7 @@ function Location() {
                   placeholder="Description"
                   name="description"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newLocation.description}
                   onChange={handleChange}
                 />
@@ -900,7 +900,7 @@ function Location() {
                   placeholder="City"
                   name="city"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newLocation.city}
                   onChange={handleChange}
                 />
@@ -912,13 +912,13 @@ function Location() {
                   pattern="\d{10}"
                   maxLength={10}
                   minLength={10}
-                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newLocation.contactNumber}
                   onChange={handleChange}
                 />
                 <div className="relative">
                   <select
-                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={newLocation.locationType}
                     name="category"
                     required
@@ -941,7 +941,7 @@ function Location() {
 
                 <div className="relative mb-4">
                   <select
-                    className="w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none"
+                    className="w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={newLocation.status}
                     name="status"
                     required

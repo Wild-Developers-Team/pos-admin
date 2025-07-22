@@ -553,7 +553,7 @@ function Transfer() {
                     transfer.itemTransferDetails.map((detail, dIdx) => (
                       <tr
                         key={`${idx}-${dIdx}`}
-                        className="border-b bg-white text-center dark:bg-gray-800"
+                        className="border-b bg-white text-center dark:border-gray-700 dark:bg-gray-800"
                       >
                         {/* Action buttons */}
                         <td className="w-[10%] px-6 py-4">
@@ -665,11 +665,11 @@ function Transfer() {
         </div>
 
         {showModal && selectedTransfer && (
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40 text-gray-600">
-            <div className="hide-scrollbar relative m-2  w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-lg">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="hide-scrollbar relative m-2  w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+                className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -773,7 +773,7 @@ function Transfer() {
 
                   <div className="relative w-full">
                     <select
-                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none"
+                      className="mt-1 w-full appearance-none rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       value={
                         selectedTransfer.itemTransferDetails[0]?.item.status
                       }

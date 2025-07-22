@@ -125,7 +125,7 @@ export default function Login() {
         }}
       >
         <div className="absolute left-1/2 top-2 z-10 -translate-x-1/2">
-          <span className="rounded-b-2xl bg-white px-6 py-3 text-2xl font-extrabold text-secondary">
+          <span className="rounded-b-2xl border-2 border-primary bg-white px-6 py-3 text-2xl font-extrabold text-secondary md:text-3xl">
             AVENTA<span className="text-primary">POS</span>
           </span>
         </div>
