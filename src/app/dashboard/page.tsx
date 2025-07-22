@@ -1,4 +1,5 @@
 "use client";
+import Chart from "@/components/Chart/chart";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import withAuth from "@/utils/withAuth";
 import {
@@ -231,6 +232,28 @@ function Home() {
                   </div>
                 </div>
               </li>
+              <li className="py-3 sm:py-4">
+                <div className="flex items-center ">
+                  <div className="shrink-0">
+                    <img
+                      className="h-10 w-10 rounded-full"
+                      src="/admin/images/user.jpg"
+                      alt="Customer"
+                    />
+                  </div>
+                  <div className="ms-4 min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                      Jhone Break
+                    </p>
+                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                      email@windster.com
+                    </p>
+                  </div>
+                  <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                    $367
+                  </div>
+                </div>
+              </li>
               <li className="pb-0 pt-3 sm:pt-4">
                 <div className="flex items-center ">
                   <div className="shrink-0">
@@ -256,6 +279,8 @@ function Home() {
             </ul>
           </div>
         </div>
+        {/* Right Side */}
+        <Chart />
       </div>
     </DefaultLayout>
   );
