@@ -1,7 +1,7 @@
 import Login from "./auth/login/page";
 
 export const metadata = {
-  title: "POS System",
+  title: "AVENTA POS",
   description: "Developed By Tineth Pathirage",
   icons: {
     icon: "/jit/images/icon.png",
