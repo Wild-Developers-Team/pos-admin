@@ -4,7 +4,7 @@ export const metadata = {
   title: "AVENTA POS",
   description: "Developed By Tineth Pathirage",
   icons: {
-    icon: "/jit/images/icon.png",
+    icon: "/admin/images/logo/icon.png",
   },
 };
 
