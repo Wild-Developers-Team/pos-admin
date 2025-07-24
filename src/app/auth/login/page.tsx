@@ -120,7 +120,7 @@ export default function Login() {
           backgroundImage: "url('/admin/images/bg.svg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.2)",
+          backgroundColor: "rgba(0, 0, 0, 0.1)",
           backgroundBlendMode: "overlay",
         }}
       >
