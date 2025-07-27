@@ -896,85 +896,127 @@ function NewTransfer() {
         </div>
       )}
       {showBillModal && billTransferData && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div
-            className="relative w-[90%] max-w-2xl rounded-3xl bg-white p-6 shadow-lg dark:bg-gray-900"
-            id="bill-content"
-          >
-            <h2 className="mb-4 text-center text-xl font-bold text-gray-700 dark:text-white">
-              Transfer Bill
-            </h2>
-            <div className="mb-4 text-sm text-gray-700 dark:text-gray-200">
-              <p>
-                <strong>Date:</strong> {billTransferData.date}
-              </p>
-              <p>
-                <strong>From:</strong> {billTransferData.fromLocationLabel}
-              </p>
-              <p>
-                <strong>To:</strong> {billTransferData.toLocationLabel}
-              </p>
-              <p>
-                <strong>Remarks:</strong> {billTransferData.senderRemark}
-              </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="hide-scrollbar h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white p-6 shadow-lg print:h-auto print:min-h-screen print:max-w-full print:rounded-none print:p-6 print:shadow-none">
+            {/* HEADER */}
+            <div className="flex items-center justify-between border-b pb-4">
+              <div>
+                <img
+                  src="/admin/images/dpd.png"
+                  alt="Logo"
+                  className="h-16 w-auto object-contain"
+                />
+                <div className="mt-2 text-xl font-bold">DPD Chemical</div>
+                <div className="text-sm text-gray-600">
+                  Pemaduwa, Anuradhapura
+                </div>
+                <div className="text-sm text-gray-600">
+                  078 6065410 / 025 3133969
+                </div>
+                <div className="text-sm text-gray-600">
+                  nimeshkalharapk@gmail.com
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold">TRANSFER INVOCE</div>
+                <div className="text-sm text-gray-600">
+                  {billTransferData.date}
+                </div>
+                <div className="text-sm text-gray-600">
+                  TRANSFER NO : {billTransferData.grnNo || "N/A"}
+                </div>
+              </div>
             </div>
 
-            <div className="mb-4">
-              <table className="w-full table-auto border-collapse text-sm text-gray-800 dark:text-white">
-                <thead>
-                  <tr className="border-b border-gray-300 dark:border-gray-600">
-                    <th className="p-2 text-left">#</th>
-                    <th className="p-2 text-left">Item Code</th>
-                    <th className="p-2 text-left">Qty</th>
-                    <th className="p-2 text-left">Cost</th>
-                    <th className="p-2 text-left">Total</th>
-                  </tr>
-                </thead>
+            {/* BILL INFO */}
+            <div className="mt-4 w-full text-sm">
+              <table className="w-full table-fixed">
                 <tbody>
-                  {billTransferData.cartItems.map((item: any, index: any) => (
-                    <tr
-                      key={index}
-                      className="border-b border-gray-200 dark:border-gray-700"
-                    >
-                      <td className="p-2">{index + 1}</td>
-                      <td className="p-2">{item.itemCode}</td>
-                      <td className="p-2">{item.qty}</td>
-                      <td className="p-2">{item.itemCost?.toFixed(2)}</td>
-                      <td className="p-2">
-                        {(item.qty * item.itemCost).toFixed(2)}
-                      </td>
-                    </tr>
-                  ))}
                   <tr>
-                    <td colSpan={4} className="p-2 text-right font-bold">
-                      Total
+                    <td className="w-24 align-top font-semibold">From</td>
+                    <td className="pr-4">
+                      : {billTransferData.fromLocationLabel}
                     </td>
-                    <td className="p-2 font-bold">
-                      {billTransferData.cartItems
-                        .reduce(
-                          (sum: any, item: any) =>
-                            sum + item.qty * item.itemCost,
-                          0,
-                        )
-                        .toFixed(2)}
+                  </tr>
+                  <tr>
+                    <td className="align-top font-semibold">To</td>
+                    <td>: {billTransferData.toLocationLabel}</td>
+                  </tr>
+                  {/* <tr>
+                    <td className="align-top font-semibold">Remarks</td>
+                    <td colSpan={3}>: {billTransferData.senderRemark}</td>
+                  </tr> */}
+                </tbody>
+              </table>
+            </div>
+
+            {/* ITEM TABLE */}
+            <table className="mt-6 w-full table-auto border-collapse overflow-hidden text-sm">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-2 py-1">#</th>
+                  <th className="border px-2 py-1">Item Name</th>
+                  <th className="border px-2 py-1">Item Code</th>
+                  <th className="border px-2 py-1">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {billTransferData.cartItems.map((item: any, index: number) => (
+                  <tr key={index}>
+                    <td className="border px-2 py-1 text-center">
+                      {index + 1}
                     </td>
+                    <td className="border px-2 py-1">{item.description}</td>
+                    <td className="border px-2 py-1">{item.itemCode}</td>
+                    <td className="border px-2 py-1 text-center">{item.qty}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* TOTAL SUMMARY */}
+            <div className="mt-4 flex justify-end text-sm">
+              <table className="text-right">
+                <tbody>
+                  <tr className="text-lg font-bold text-primary">
+                    <td className="pr-4">Total Items :</td>
+                    <td>{billTransferData.cartItems.length}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <div className="mt-6 flex justify-end gap-4">
+            {/* SIGNATURE AREA */}
+            <div className="mt-12 text-sm text-gray-600 print:mt-24">
+              <div className="w-1/2">
+                <div className="w-48 border-t border-black pt-2">
+                  Authorized Signature
+                </div>
+                <div className="mt-4 text-xs">
+                  Date: __________________________
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-10 text-sm text-gray-600 print:mt-10">
+              <p className="font-semibold">NOTES:</p>
+              <p>Please verify items upon receipt.</p>
+              <p>Report any missing/damaged items within 24hrs.</p>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="mt-6 flex justify-end gap-2 print:hidden">
               <button
                 onClick={() => setShowBillModal(false)}
-                className="w-24 rounded-xl bg-gray-300 px-4 py-2 text-sm font-bold text-black hover:bg-gray-400 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                className="w-40 rounded-2xl bg-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-400"
               >
                 Close
               </button>
               <button
                 onClick={() => window.print()}
-                className="w-24 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-hover"
+                className="w-40 rounded-2xl bg-primary px-4 py-2 text-white hover:bg-hover"
               >
-                Print Bill
+                Print
               </button>
             </div>
           </div>

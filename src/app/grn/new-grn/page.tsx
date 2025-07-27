@@ -60,6 +60,9 @@ function NewGRN() {
 
   const [editModalVisible, setEditModalVisible] = useState(false);
 
+  const [showPrintModal, setShowPrintModal] = useState(false);
+  const [printData, setPrintData] = useState<any>(null);
+
   const [cartItems, setCartItems] = useState<ICartGRNItem[]>([]);
   const [modalItem, setModalItem] = useState<any>({
     itemCode: "",
@@ -399,6 +402,23 @@ function NewGRN() {
           "Success",
           response.message || "GRN item created successfully",
         );
+        // Set data for print modal
+        setPrintData({
+          grnNo: response.data?.grnNo || "N/A",
+          date: new Date(),
+          location:
+            locations.find((loc) => loc.code === newGRN.locationCode)
+              ?.description || "N/A",
+          supplier:
+            suppliers.find((sup) => sup.code === newGRN.supplierId)
+              ?.description || "N/A",
+          paid: paidAmount,
+          credit: computedCredit,
+          total: totalAmount,
+          items: cartItems,
+        });
+
+        setShowPrintModal(true);
         // fetchGRN();
         setNewGRN({
           supplierId: "",
@@ -1007,8 +1027,8 @@ function NewGRN() {
                   {/* Header Row */}
                   <div className="sticky top-0 z-10 grid grid-cols-4 gap-4  border-gray-200 bg-white px-4 py-4 text-sm font-semibold text-gray-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
                     <div className="text-center">Action</div>
-                    <div className="text-center">Code</div>
                     <div className="text-center">Name</div>
+                    <div className="text-center">Code</div>
                     {/* <div className="text-center">Category</div>
                     <div className="text-center">Brand</div> */}
                     <div className="text-center">Status</div>
@@ -1054,13 +1074,13 @@ function NewGRN() {
                               </button>
                             )}
                           </div>
-
-                          <div className="text-center text-gray-700 dark:text-gray-200 md:text-center">
-                            {item.code}
-                          </div>
                           <div className="text-center text-gray-700 dark:text-gray-200 md:text-center">
                             {item.description}
                           </div>
+                          <div className="text-center text-gray-700 dark:text-gray-200 md:text-center">
+                            {item.code}
+                          </div>
+
                           {/* <div className="text-center text-gray-700 dark:text-gray-200 md:text-center">
                             {item.category.description}
                           </div>
@@ -1100,6 +1120,7 @@ function NewGRN() {
                       Item Name
                     </div>
                     <div className="flex w-[60%] justify-between px-2 text-[12px]">
+                      <span className="text-primary">Discount</span>
                       <span className="text-primary">Lable Price</span>
                       <span className="text-primary">Cost</span>
                       <span className="text-primary">Sale Price</span>
@@ -1133,6 +1154,11 @@ function NewGRN() {
                         <div className="flex w-[60%] flex-col justify-between rounded-2xl border border-gray-200  bg-white p-2 px-3 py-2 text-right text-sm  dark:border-gray-500 dark:bg-gray-800">
                           {/* Prices & Quantity Row */}
                           <div className="flex justify-between text-sm font-bold">
+                            <span className="text-red-500 dark:text-red-400">
+                              {item.lablePrice > 0
+                                ? `${(((item.lablePrice - item.itemCost) / item.lablePrice) * 100).toFixed(2)}%`
+                                : "0.00%"}
+                            </span>
                             <span className="text-gray-600 dark:text-gray-400">
                               {item.lablePrice?.toFixed(2)}
                             </span>
@@ -1205,6 +1231,7 @@ function NewGRN() {
                       className="h-full w-full appearance-none rounded-xl border bg-[#EAF4FE] p-2 pr-10 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                       value={newGRN.supplierId}
                       name="supplierId"
+                      required
                       onChange={(e) =>
                         setNewGRN({ ...newGRN, supplierId: e.target.value })
                       }
@@ -1366,7 +1393,7 @@ function NewGRN() {
                       />
                     </div>
                   </div>
-                  <div className="flex w-full justify-between gap-4">
+                  {/* <div className="flex w-full justify-between gap-4">
                     <div className="w-1/2">
                       <strong>Customer Discount (%)</strong>
                       <input
@@ -1387,7 +1414,7 @@ function NewGRN() {
                         className="mb-2 mt-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                       />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="flex w-full justify-between gap-4">
                     <div className="w-full">
                       <strong>Quantity</strong>
@@ -1429,7 +1456,7 @@ function NewGRN() {
       )}
       {showViewModal && selectedViewGRN && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative m-2 w-full max-w-4xl rounded-3xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
+          <div className="relative m-2 w-full max-w-5xl rounded-3xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
             {/* Close Icon Top-Right */}
             <button
               onClick={() => setShowViewModal(false)}
@@ -1461,6 +1488,7 @@ function NewGRN() {
                   <thead className="bg-gray-200 dark:bg-gray-700">
                     <tr>
                       <th className="px-4 py-2 text-center">Location</th>
+                      <th className="px-4 py-2 text-center">Discount</th>
                       <th className="px-4 py-2 text-center">Label Price</th>
                       <th className="px-4 py-2 text-center">Cost</th>
                       <th className="px-4 py-2 text-center">Sale</th>
@@ -1483,6 +1511,11 @@ function NewGRN() {
                       >
                         <td className="px-4 py-2">
                           {grn.location.description || "Unknown"}
+                        </td>
+                        <td className="px-4 py-2">
+                          {grn.lablePrice > 0
+                            ? `${(((grn.lablePrice - grn.itemCost) / grn.lablePrice) * 100).toFixed(2)}%`
+                            : "0.00%"}
                         </td>
                         <td className="px-4 py-2">
                           {grn.lablePrice.toFixed(2)}
@@ -1532,6 +1565,7 @@ function NewGRN() {
                   <tfoot className="bg-gray-100 text-center font-semibold dark:bg-gray-900">
                     <tr>
                       <td className="px-4 py-2">Sub Total</td>
+                      <td className="px-4 py-2"></td>
                       <td className="px-4 py-2">
                         {selectedViewGRN
                           .reduce((sum, g) => sum + g.lablePrice, 0)
@@ -1647,7 +1681,7 @@ function NewGRN() {
               </div>
               <div>
                 <label className="mb-2 block text-gray-700 dark:text-gray-200">
-                  Retail Price
+                  Sale Price
                 </label>
                 <input
                   type="number"
@@ -1677,7 +1711,7 @@ function NewGRN() {
                   className="w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 dark:text-white"
                 />
               </div>
-              <div>
+              {/* <div>
                 <label className="mb-2 block text-gray-700 dark:text-gray-200">
                   Retail Discount
                 </label>
@@ -1692,8 +1726,8 @@ function NewGRN() {
                   }
                   className="w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 dark:text-white"
                 />
-              </div>
-              <div>
+              </div> */}
+              {/* <div>
                 <label className="mb-2 block text-gray-700 dark:text-gray-200">
                   Wholesale Discount
                 </label>
@@ -1708,7 +1742,7 @@ function NewGRN() {
                   }
                   className="w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 dark:text-white"
                 />
-              </div>
+              </div> */}
               <div>
                 <label className="mb-2 block text-gray-700 dark:text-gray-200">
                   Quantity
@@ -1970,6 +2004,163 @@ function NewGRN() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {showPrintModal && printData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="hide-scrollbar h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white p-6 shadow-lg print:h-auto print:min-h-screen print:max-w-full print:rounded-none print:p-6 print:shadow-none">
+            {/* HEADER */}
+            <div className="flex items-center justify-between border-b pb-4">
+              <div>
+                <img
+                  src={"/admin/images/dpd.png"}
+                  alt="Logo"
+                  className="h-16 w-auto object-contain"
+                />
+                <div className="mt-2 text-xl font-bold">DPD Chemical</div>
+                <div className="text-sm text-gray-600">
+                  Pemaduwa, Anuradhapura
+                </div>
+                <div className="text-sm text-gray-600">
+                  078 6065410 / 025 3133969
+                </div>
+                <div className="text-sm text-gray-600">
+                  nimeshkalharapk@gmail.com
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold">GRN INVOICE</div>
+                <div className="text-sm text-gray-600">
+                  {printData.date.toLocaleDateString()}{" "}
+                  {printData.date.toLocaleTimeString()}
+                </div>
+                <div className="text-sm text-gray-600">
+                  GRN NO : {printData.grnNo}
+                </div>
+              </div>
+            </div>
+
+            {/* BILL TO / SHIP TO */}
+            <div className="mt-4 flex justify-between text-sm">
+              <div>
+                <div className="font-semibold">BILL TO</div>
+                <div>{printData.supplier}</div>
+                <div>{printData.location}</div>
+              </div>
+              <div className="text-right">
+                <div className="font-semibold">SHIP TO</div>
+                <div>{printData.location}</div>
+              </div>
+            </div>
+
+            {/* ITEM TABLE */}
+            <table className="mt-6 w-full table-auto border-collapse overflow-hidden text-sm">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border px-2 py-1">#</th>
+                  {/* <th className="border px-2 py-1">Code</th> */}
+                  <th className="border px-2 py-1">Item</th>
+                  <th className="border px-2 py-1">Qty</th>
+                  <th className="border px-2 py-1">Cost</th>
+                  <th className="border px-2 py-1">Label</th>
+                  <th className="border px-2 py-1">Retail</th>
+                  <th className="border px-2 py-1">Wholesale</th>
+                  <th className="border px-2 py-1">Discount</th>
+                  <th className="border px-2 py-1">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {printData.items.map((item: any, index: number) => (
+                  <tr key={index} className="text-center">
+                    <td className="border px-2 py-1">{index + 1}</td>
+                    {/* <td className="border px-2 py-1">{item.itemCode}</td> */}
+                    <td className="border px-2 py-1">{item.description}</td>
+                    <td className="border px-2 py-1">{item.qty}</td>
+                    <td className="border px-2 py-1">
+                      {item.itemCost.toFixed(2)}
+                    </td>
+                    <td className="border px-2 py-1">
+                      {item.lablePrice.toFixed(2)}
+                    </td>
+                    <td className="border px-2 py-1">
+                      {item.salePrice.toFixed(2)}
+                    </td>
+                    <td className="border px-2 py-1">
+                      {item.wholesalePrice.toFixed(2)}
+                    </td>
+                    <td className="border px-2 py-1">
+                      {item.lablePrice > 0
+                        ? `${(((item.lablePrice - item.itemCost) / item.lablePrice) * 100).toFixed(2)}%`
+                        : "0.00%"}
+                    </td>
+                    <td className="border px-2 py-1">
+                      {(item.itemCost * item.qty).toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* TOTAL SUMMARY */}
+            <div className="mt-4 flex justify-end text-sm">
+              <table className="text-right">
+                <tbody>
+                  <tr>
+                    <td className="pr-4">Subtotal :</td>
+                    <td>Rs. {printData.total.toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-4">Paid :</td>
+                    <td>Rs. {printData.paid || "0.00"}</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-4">Discount :</td>
+                    <td>Rs. 0.00</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-4">Tax :</td>
+                    <td>Rs. 0.00</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-4">Shipping :</td>
+                    <td>Rs. 0.00</td>
+                  </tr>
+                  <tr className="text-lg font-bold text-primary">
+                    <td className="pr-4">Balance Due :</td>
+                    <td>Rs. {printData.credit.toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* SIGNATURE AREA */}
+            <div className="mt-12 text-sm text-gray-600 print:mt-24">
+              <div className="w-1/2">
+                <div className="w-48 border-t border-black pt-2">
+                  Authorized Signature
+                </div>
+                <div className="mt-4 text-xs">
+                  Date: __________________________
+                </div>
+              </div>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="mt-6 flex justify-end gap-2 print:hidden">
+              <button
+                onClick={() => setShowPrintModal(false)}
+                className="w-40 rounded-2xl bg-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-400"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="w-40 rounded-2xl bg-primary px-4 py-2 text-white hover:bg-hover"
+              >
+                Print
+              </button>
+            </div>
           </div>
         </div>
       )}
