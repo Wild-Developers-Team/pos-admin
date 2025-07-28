@@ -1064,13 +1064,14 @@ function NewGRN() {
                           <div className="text-center text-gray-700 dark:text-gray-200 md:text-center">
                             {privileges.view && (
                               <button
+                                className="rounded-full bg-blue-100 p-1.5 hover:bg-blue-200 dark:bg-blue-700"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleViewGRN(item.code);
                                 }}
                                 title="View"
                               >
-                                <ScanEye className="h-5 w-5 text-primary" />
+                                <ScanEye className="h-5 w-5 text-primary dark:text-white" />
                               </button>
                             )}
                           </div>

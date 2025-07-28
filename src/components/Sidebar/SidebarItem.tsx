@@ -37,7 +37,7 @@ const SidebarItem = ({ item, pageName, setPageName }: any) => {
           {item.label}
           {item.children && (
             <svg
-              className={`absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-gray-200 fill-current p-1 text-gray-500 dark:bg-opacity-10 dark:text-gray-200 ${
+              className={`absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-gray-200 fill-current p-1 text-gray-500 dark:bg-opacity-10 dark:text-gray-200 ${
                 pageName === item.label.toLowerCase() && "rotate-180"
               }`}
               width="20"

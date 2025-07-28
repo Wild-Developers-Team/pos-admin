@@ -101,7 +101,7 @@ const DropdownUser = () => {
             />
           ) : ( */}
           <img
-            src={"/admin/images/user.png"}
+            src={"/admin/images/user.gif"}
             className="h-full w-full rounded-full object-cover"
             alt="User"
           />
