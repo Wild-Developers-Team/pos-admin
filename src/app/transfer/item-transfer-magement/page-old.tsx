@@ -123,14 +123,6 @@ function NewTransfer() {
       return;
     }
 
-    // Keep only this: Validation for quantity not exceeding available stock
-    if (Number(modalItem.qty) > Number(selectedTransfer.qty)) {
-      showErrorAlert(
-        `Quantity cannot exceed available quantity (${selectedTransfer.qty})`,
-      );
-      return;
-    }
-
     if (editIndex !== null) {
       // Update existing item
       const updatedItems = [...cartItems];
@@ -624,18 +616,6 @@ function NewTransfer() {
                             if (item.qty === 0) {
                               showErrorAlert(
                                 "Cannot add item with 0 quantity.",
-                              );
-                              return;
-                            }
-
-                            // NEW: Check if item is already in the cart
-                            const alreadyInCart = cartItems.some(
-                              (cartItem) =>
-                                cartItem.itemCode === item.item.code,
-                            );
-                            if (alreadyInCart) {
-                              showErrorAlert(
-                                "This item is already added to the cart.",
                               );
                               return;
                             }
