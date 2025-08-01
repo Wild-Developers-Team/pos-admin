@@ -636,7 +636,7 @@ function Category() {
               </p>
               {modalMode === "edit" ? (
                 <div className="mb-2">
-                  <strong>Description:</strong>
+                  <strong>Name:</strong>
                   <input
                     type="text"
                     className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900 "
@@ -651,7 +651,7 @@ function Category() {
                 </div>
               ) : (
                 <p className="mb-2">
-                  <strong>Description:</strong> {selectedCategory.description}
+                  <strong>Name:</strong> {selectedCategory.description}
                 </p>
               )}
 
@@ -755,7 +755,7 @@ function Category() {
                 />
                 <input
                   type="text"
-                  placeholder="Description"
+                  placeholder="Category Name"
                   name="description"
                   required
                   className="mb-2 w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"

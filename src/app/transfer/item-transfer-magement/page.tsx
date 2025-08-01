@@ -28,6 +28,8 @@ import {
 import { showErrorAlert, showSuccessAlert } from "@/utils/alert";
 import withAuth from "@/utils/withAuth";
 import { Search, PlusCircle, FolderPlus } from "lucide-react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 function NewTransfer() {
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -42,6 +44,48 @@ function NewTransfer() {
   const [selectedTransfer, setSelectedTransfer] = useState<any>(null);
 
   const [editModalVisible, setEditModalVisible] = useState(false);
+
+  // Direct pdf download generation state
+  const handleDirectDownloadPDF = async () => {
+    const element = document.getElementById("invoice-content");
+    if (!element) return;
+
+    // Backup original styles
+    const originalHeight = element.style.height;
+    const originalOverflow = element.style.overflow;
+
+    try {
+      // Expand content to show full height
+      element.style.height = "auto";
+      element.style.overflow = "visible";
+
+      // Give time for layout to apply
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        ignoreElements: (el) => el.classList.contains("no-pdf"),
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight,
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`TransferInvoice_${Date.now()}.pdf`);
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+    } finally {
+      // Restore original styles
+      element.style.height = originalHeight;
+      element.style.overflow = originalOverflow;
+    }
+  };
 
   // Print functions
   const [showBillModal, setShowBillModal] = useState(false);
@@ -537,22 +581,10 @@ function NewTransfer() {
                       />
                     </svg>
                   </button>
+
                   <input
                     type="text"
-                    ref={searchInputRef}
-                    placeholder="Code"
-                    className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
-                    value={selectedFilters.code}
-                    onChange={(e) =>
-                      setSelectedFilters({
-                        ...selectedFilters,
-                        code: e.target.value,
-                      })
-                    }
-                  />
-                  <input
-                    type="text"
-                    placeholder="Description"
+                    placeholder="Item Name"
                     ref={searchInputRef}
                     className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                     value={selectedFilters.description}
@@ -560,6 +592,19 @@ function NewTransfer() {
                       setSelectedFilters({
                         ...selectedFilters,
                         description: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    ref={searchInputRef}
+                    placeholder="Item Code"
+                    className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
+                    value={selectedFilters.code}
+                    onChange={(e) =>
+                      setSelectedFilters({
+                        ...selectedFilters,
+                        code: e.target.value,
                       })
                     }
                   />
@@ -917,7 +962,10 @@ function NewTransfer() {
       )}
       {showBillModal && billTransferData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-          <div className="hide-scrollbar h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white p-6 shadow-lg print:h-auto print:min-h-screen print:max-w-full print:rounded-none print:p-6 print:shadow-none">
+          <div
+            id="invoice-content"
+            className="hide-scrollbar h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white p-6 shadow-lg dark:text-gray-800 print:h-auto print:min-h-screen print:max-w-full print:rounded-none print:p-6 print:shadow-none"
+          >
             {/* HEADER */}
             <div className="flex items-center justify-between border-b pb-4">
               <div>
@@ -974,10 +1022,10 @@ function NewTransfer() {
             <table className="mt-6 w-full table-auto border-collapse overflow-hidden text-sm">
               <thead>
                 <tr className="bg-gray-200 text-left">
-                  <th className="border px-2 py-1">#</th>
-                  <th className="border px-2 py-1">Item Name</th>
-                  <th className="border px-2 py-1">Item Code</th>
-                  <th className="border px-2 py-1">Quantity</th>
+                  <th className="border px-2 py-2.5">#</th>
+                  <th className="border px-2 py-2.5">Item Name</th>
+                  <th className="border px-2 py-2.5">Item Code</th>
+                  <th className="border px-2 py-2.5">Quantity</th>
                 </tr>
               </thead>
               <tbody>
@@ -986,9 +1034,11 @@ function NewTransfer() {
                     <td className="border px-2 py-1 text-center">
                       {index + 1}
                     </td>
-                    <td className="border px-2 py-1">{item.description}</td>
-                    <td className="border px-2 py-1">{item.itemCode}</td>
-                    <td className="border px-2 py-1 text-center">{item.qty}</td>
+                    <td className="border px-2 py-2.5">{item.description}</td>
+                    <td className="border px-2 py-2.5">{item.itemCode}</td>
+                    <td className="border px-2 py-2.5 text-center">
+                      {item.qty}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -1025,10 +1075,10 @@ function NewTransfer() {
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="mt-6 flex justify-end gap-2 print:hidden">
+            <div className="no-pdf mt-6 flex justify-end gap-2 print:hidden">
               <button
                 onClick={() => setShowBillModal(false)}
-                className="w-40 rounded-2xl bg-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-400"
+                className="w-40 rounded-2xl bg-gray-400 px-4 py-2 text-white hover:bg-opacity-80"
               >
                 Close
               </button>
@@ -1037,6 +1087,12 @@ function NewTransfer() {
                 className="w-40 rounded-2xl bg-primary px-4 py-2 text-white hover:bg-hover"
               >
                 Print
+              </button>
+              <button
+                onClick={handleDirectDownloadPDF}
+                className="w-40 rounded-2xl bg-hover px-4 py-2 text-white hover:bg-primary"
+              >
+                Download PDF
               </button>
             </div>
           </div>

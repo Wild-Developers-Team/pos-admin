@@ -43,6 +43,8 @@ import { showErrorAlert, showSuccessAlert } from "@/utils/alert";
 import withAuth from "@/utils/withAuth";
 import { Search, PlusCircle, FolderPlus } from "lucide-react";
 import Link from "next/link";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 function NewGRN() {
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -88,6 +90,48 @@ function NewGRN() {
       keyword: "",
     },
   });
+
+  // Direct pdf download generation state
+  const handleDirectDownloadPDF = async () => {
+    const element = document.getElementById("invoice-content");
+    if (!element) return;
+
+    // Backup original styles
+    const originalHeight = element.style.height;
+    const originalOverflow = element.style.overflow;
+
+    try {
+      // Expand content to show full height
+      element.style.height = "auto";
+      element.style.overflow = "visible";
+
+      // Give time for layout to apply
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        ignoreElements: (el) => el.classList.contains("no-pdf"),
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight,
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`TransferInvoice_${Date.now()}.pdf`);
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+    } finally {
+      // Restore original styles
+      element.style.height = originalHeight;
+      element.style.overflow = originalOverflow;
+    }
+  };
 
   // Privileges and defaultStatus state
   const [privileges, setPrivileges] = useState({
@@ -240,7 +284,7 @@ function NewGRN() {
 
   const [newGRN, setNewGRN] = useState<IAddGRN>({
     supplierId: "",
-    locationCode: "Warehouse",
+    locationCode: "LOC_1",
     cost: 0,
     debitAmount: 0,
     creditAmount: 0,
@@ -2010,7 +2054,10 @@ function NewGRN() {
       )}
       {showPrintModal && printData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-          <div className="hide-scrollbar h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white p-6 shadow-lg print:h-auto print:min-h-screen print:max-w-full print:rounded-none print:p-6 print:shadow-none">
+          <div
+            id="invoice-content"
+            className="hide-scrollbar h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white p-6 shadow-lg dark:text-gray-800 print:h-auto print:min-h-screen print:max-w-full print:rounded-none print:p-6 print:shadow-none"
+          >
             {/* HEADER */}
             <div className="flex items-center justify-between border-b pb-4">
               <div>
@@ -2061,41 +2108,41 @@ function NewGRN() {
                 <tr className="bg-gray-200">
                   <th className="border px-2 py-1">#</th>
                   {/* <th className="border px-2 py-1">Code</th> */}
-                  <th className="border px-2 py-1">Item</th>
-                  <th className="border px-2 py-1">Qty</th>
-                  <th className="border px-2 py-1">Cost</th>
-                  <th className="border px-2 py-1">Label</th>
-                  <th className="border px-2 py-1">Retail</th>
-                  <th className="border px-2 py-1">Wholesale</th>
-                  <th className="border px-2 py-1">Discount</th>
-                  <th className="border px-2 py-1">Total</th>
+                  <th className="border px-2 py-2.5">Item</th>
+                  <th className="border px-2 py-2.5">Qty</th>
+                  <th className="border px-2 py-2.5">Cost</th>
+                  <th className="border px-2 py-2.5">Label</th>
+                  <th className="border px-2 py-2.5">Retail</th>
+                  <th className="border px-2 py-2.5">Wholesale</th>
+                  <th className="border px-2 py-2.5">Discount</th>
+                  <th className="border px-2 py-2.5">Total</th>
                 </tr>
               </thead>
               <tbody>
                 {printData.items.map((item: any, index: number) => (
                   <tr key={index} className="text-center">
-                    <td className="border px-2 py-1">{index + 1}</td>
-                    {/* <td className="border px-2 py-1">{item.itemCode}</td> */}
-                    <td className="border px-2 py-1">{item.description}</td>
-                    <td className="border px-2 py-1">{item.qty}</td>
-                    <td className="border px-2 py-1">
+                    <td className="border px-2 py-2.5">{index + 1}</td>
+                    {/* <td className="border px-2 py-2.5">{item.itemCode}</td> */}
+                    <td className="border px-2 py-2.5">{item.description}</td>
+                    <td className="border px-2 py-2.5">{item.qty}</td>
+                    <td className="border px-2 py-2.5">
                       {item.itemCost.toFixed(2)}
                     </td>
-                    <td className="border px-2 py-1">
+                    <td className="border px-2 py-2.5">
                       {item.lablePrice.toFixed(2)}
                     </td>
-                    <td className="border px-2 py-1">
+                    <td className="border px-2 py-2.5">
                       {item.salePrice.toFixed(2)}
                     </td>
-                    <td className="border px-2 py-1">
+                    <td className="border px-2 py-2.5">
                       {item.wholesalePrice.toFixed(2)}
                     </td>
-                    <td className="border px-2 py-1">
+                    <td className="border px-2 py-2.5">
                       {item.lablePrice > 0
                         ? `${(((item.lablePrice - item.itemCost) / item.lablePrice) * 100).toFixed(2)}%`
                         : "0.00%"}
                     </td>
-                    <td className="border px-2 py-1">
+                    <td className="border px-2 py-2.5">
                       {(item.itemCost * item.qty).toFixed(2)}
                     </td>
                   </tr>
@@ -2148,10 +2195,10 @@ function NewGRN() {
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="mt-6 flex justify-end gap-2 print:hidden">
+            <div className="no-pdf mt-6 flex justify-end gap-2 print:hidden">
               <button
                 onClick={() => setShowPrintModal(false)}
-                className="w-40 rounded-2xl bg-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-400"
+                className="w-40 rounded-2xl bg-gray-400 px-4 py-2 text-white hover:bg-opacity-80"
               >
                 Close
               </button>
@@ -2160,6 +2207,12 @@ function NewGRN() {
                 className="w-40 rounded-2xl bg-primary px-4 py-2 text-white hover:bg-hover"
               >
                 Print
+              </button>
+              <button
+                onClick={handleDirectDownloadPDF}
+                className="w-40 rounded-2xl bg-hover px-4 py-2 text-white hover:bg-primary"
+              >
+                Download PDF
               </button>
             </div>
           </div>

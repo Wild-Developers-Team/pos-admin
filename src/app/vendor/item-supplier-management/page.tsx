@@ -921,7 +921,7 @@ function Supplier() {
                   </>
                 ) : (
                   <p className="mb-2">
-                    <strong>Company:</strong> {selectedSupplier.company}
+                    <strong>Company:</strong> {selectedSupplier.company || "Unavailable"}
                   </p>
                 )}
               </div>

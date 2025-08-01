@@ -42,7 +42,7 @@ function Profile() {
         <div className="overflow-hidden rounded-2xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="relative z-20 h-35 md:h-65">
             {/* Transparent overlay */}
-            <div className="absolute inset-0 z-10 rounded-tl-sm rounded-tr-sm bg-black bg-opacity-20"></div>
+            <div className="absolute inset-0 z-10 rounded-tl-sm rounded-tr-sm bg-black bg-opacity-15"></div>
 
             {/* Image */}
             <img

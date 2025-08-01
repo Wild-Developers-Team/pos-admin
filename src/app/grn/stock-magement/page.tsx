@@ -635,7 +635,7 @@ function Stock() {
               </p>
 
               <p className="mb-2">
-                <strong>Description:</strong>{" "}
+                <strong>Name:</strong>{" "}
                 {selectedStock.item.description || "Unavailable"}
               </p>
 

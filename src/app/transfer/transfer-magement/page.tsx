@@ -698,7 +698,7 @@ function Transfer() {
               </p>
 
               <p className="mb-2">
-                <strong>Description:</strong>{" "}
+                <strong>Name:</strong>{" "}
                 {selectedTransfer.itemTransferDetails[0]?.item.description ||
                   "Unavailable"}
               </p>

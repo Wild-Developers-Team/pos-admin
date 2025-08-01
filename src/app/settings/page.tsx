@@ -101,7 +101,7 @@ const Settings = () => {
 
         <div className="grid grid-cols-5 gap-8 xl:h-full xl:items-stretch">
           <div className="col-span-5 flex h-full flex-col xl:col-span-3">
-            <div className="h-full rounded-xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+            <div className="h-full rounded-2xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
               <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
                 <h3 className="font-medium text-black dark:text-white">
                   Reset Your Password
@@ -213,7 +213,7 @@ const Settings = () => {
             </div>
           </div>
           <div className="relative col-span-5 flex h-full flex-col overflow-hidden xl:col-span-2">
-            <div className="h-full rounded-xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+            <div className="h-full rounded-2xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
               <div className="flex items-center border-b border-stroke px-7 py-4 dark:border-strokedark">
                 <Info className="h-6 w-6 text-red-500" />
                 <span className="ms-1 flex-1 whitespace-nowrap text-start font-medium text-red-500">

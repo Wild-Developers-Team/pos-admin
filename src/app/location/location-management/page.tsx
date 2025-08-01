@@ -437,7 +437,7 @@ function Location() {
               />
               <input
                 type="text"
-                placeholder="Description"
+                placeholder="Name"
                 className="w-full rounded-xl border p-2 focus:outline-none dark:border-gray-500 dark:bg-boxdark-2"
                 value={selectedFilters.description}
                 onChange={(e) =>
@@ -715,7 +715,7 @@ function Location() {
 
               {modalMode === "edit" ? (
                 <div className="mb-2">
-                  <strong>Description:</strong>
+                  <strong>Name:</strong>
                   <input
                     type="text"
                     className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
@@ -730,7 +730,7 @@ function Location() {
                 </div>
               ) : (
                 <p className="mb-2">
-                  <strong>Description:</strong> {selectedLocation.description}
+                  <strong>Name:</strong> {selectedLocation.description}
                 </p>
               )}
 
@@ -888,7 +888,7 @@ function Location() {
                 />
                 <input
                   type="text"
-                  placeholder="Description"
+                  placeholder="Location Name"
                   name="description"
                   required
                   className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"

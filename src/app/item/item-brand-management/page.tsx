@@ -636,7 +636,7 @@ function Brand() {
               </p>
               {modalMode === "edit" ? (
                 <div className="mb-2">
-                  <strong>Description:</strong>
+                  <strong>Name:</strong>
                   <input
                     type="text"
                     className="mt-1 w-full rounded-lg border p-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
@@ -651,7 +651,7 @@ function Brand() {
                 </div>
               ) : (
                 <p className="mb-2">
-                  <strong>Description:</strong> {selectedBrand.description}
+                  <strong>Name:</strong> {selectedBrand.description}
                 </p>
               )}
 
@@ -718,7 +718,7 @@ function Brand() {
           </div>
         )}
 
-        {/* Add user modal  */}
+        {/* Add modal  */}
         {showAddModal && (
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
             <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg dark:bg-gray-800 text-gray-600 dark:text-gray-300 dark:border dark:border-gray-500">
@@ -757,7 +757,7 @@ function Brand() {
                 />
                 <input
                   type="text"
-                  placeholder="Description"
+                  placeholder="Brand Name"
                   name="description"
                   required
                   className="mb-2 w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
