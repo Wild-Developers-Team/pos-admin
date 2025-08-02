@@ -420,9 +420,14 @@ function Item() {
     try {
       const token = getSessionData("accessToken") || "";
       const username = getSessionData("userProfile")?.username || "";
+      const payload = {
+        ...selectedItem,
+        category: selectedItem.category.code,
+        brand: selectedItem.brand.code,
+      };
       const response = await postLoginRequest(
         "api/v1/item/update",
-        selectedItem,
+        payload,
         UPDATE,
         token,
         username,

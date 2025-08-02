@@ -762,3 +762,63 @@ export interface ITransferStockFilter {
     status: string;
   };
 }
+
+
+export interface ISummary {
+  fromDate: string;
+  toDate: string;
+  locations: {
+    [locationCode: string]: {
+      summary: {
+        totalReturns: number;
+        totalCashIn: number;
+        balance: number;
+        totalSales: number;
+        totalCashOut: number;
+      };
+      cashiers: {
+        [cashierName: string]: {
+          sales: {
+            id: number;
+            invoiceNumber: string;
+            paymentType: string;
+            paymentTypeDescription: string;
+            customer: {
+              title: string;
+              titleDescription: string;
+              firstName: string;
+              lastName: string;
+              city: string;
+            };
+            salesType: string;
+            salesTypeDescription: string;
+            totalAmount: number;
+            payAmount: number;
+            remark: string;
+            salesDetailsResponseDTOList: any[] | null;
+          }[];
+          returns: any[];
+          inOuts: {
+            id: number;
+            cashInOut: string;
+            cashInOutDescription: string;
+            remark: string;
+            amount: number;
+          }[];
+          totalSales: number;
+          totalReturns: number;
+          totalCashIn: number;
+          totalCashOut: number;
+          balance: number;
+        };
+      };
+    };
+  };
+  grandSummary: {
+    totalReturns: number;
+    totalCashIn: number;
+    balance: number;
+    totalSales: number;
+    totalCashOut: number;
+  };
+}
