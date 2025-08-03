@@ -117,12 +117,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           </Link> */}
         <div className="m-2 mt-0 flex items-center justify-between gap-2 bg-gray-50 px-2 py-1 dark:bg-transparent md:justify-center md:px-6 lg:px-6 lg:py-1">
           <Link href="/dashboard">
-            <div className="m-1 mt-4 flex items-center">
-              {/* <img
-                className="h-auto w-34"
-                src={"/jit/images/logo/logo-4.png"}
+            <div className="m-1 mt-4 flex gap-1 items-center">
+              <img
+                className="h-auto w-8"
+                src={"/admin/images/logo/icon.png"}
                 alt="Icon"
-              /> */}
+              />
               <span className="text-2xl font-extrabold text-secondary dark:text-white">
                 AVENTA<span className="text-primary">POS</span>
               </span>

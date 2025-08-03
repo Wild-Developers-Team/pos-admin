@@ -124,10 +124,17 @@ export default function Login() {
           backgroundBlendMode: "overlay",
         }}
       >
-        <div className="absolute left-1/2 top-2 z-10 -translate-x-1/2">
-          <span className="rounded-b-2xl border-2 border-primary bg-white px-6 py-3 text-xl font-extrabold text-secondary md:text-2xl">
-            AVENTA<span className="text-primary">POS</span>
-          </span>
+        <div className="absolute top-0 z-10 ">
+          <div className="flex items-center gap-1 rounded-b-2xl bg-white bg-opacity-90 px-4 py-3">
+            <img
+              className="h-auto w-8"
+              src={"/admin/images/logo/icon.png"}
+              alt="Icon"
+            />
+            <span className="text-2xl font-extrabold text-secondary dark:text-white">
+              AVENTA<span className="text-primary">POS</span>
+            </span>
+          </div>
         </div>
 
         <div className="flex max-w-md flex-col rounded-3xl border-2 border-primary bg-white px-6 py-8 shadow-md sm:px-6 md:px-8 lg:px-10">

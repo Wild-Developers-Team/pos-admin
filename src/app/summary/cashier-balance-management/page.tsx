@@ -281,6 +281,39 @@ function Balance() {
     </div>
   );
 
+  // Render cash in/out table
+  const renderCashInOutTable = (inOuts: any[]) => (
+    <div className="overflow-x-auto rounded-xl border dark:border-gray-700">
+      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
+        <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            {/* <th className="px-4 py-2">ID</th> */}
+            <th className="px-4 py-2">Type</th>
+            <th className="px-4 py-2">Description</th>
+            <th className="px-4 py-2">Remark</th>
+            <th className="px-4 py-2 text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {inOuts.map((entry, idx) => (
+            <tr
+              key={idx}
+              className="border-t bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+            >
+              {/* <td className="px-4 py-2">{entry.id}</td> */}
+              <td className="px-4 py-2">{entry.cashInOut}</td>
+              <td className="px-4 py-2">{entry.cashInOutDescription}</td>
+              <td className="px-4 py-2">{entry.remark}</td>
+              <td className="px-4 py-2 text-right">
+                {entry.amount?.toFixed(2)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Cashier Balance Management" />
@@ -387,20 +420,22 @@ function Balance() {
                 <>
                   {/* Sub-tabs */}
                   <div className="mb-4 flex flex-wrap gap-2">
-                    {["Total Summary", "Sales", "Returns"].map((tab) => (
-                      <button
-                        key={tab}
-                        className={getSubTabClass(tab, activeCashier)}
-                        onClick={() =>
-                          setSelectedSubTab((prev) => ({
-                            ...prev,
-                            [activeCashier]: tab,
-                          }))
-                        }
-                      >
-                        {tab}
-                      </button>
-                    ))}
+                    {["Total Summary", "Sales", "Returns", "Cash In/Out"].map(
+                      (tab) => (
+                        <button
+                          key={tab}
+                          className={getSubTabClass(tab, activeCashier)}
+                          onClick={() =>
+                            setSelectedSubTab((prev) => ({
+                              ...prev,
+                              [activeCashier]: tab,
+                            }))
+                          }
+                        >
+                          {tab}
+                        </button>
+                      ),
+                    )}
                   </div>
 
                   {/* Sub-tab content */}
@@ -420,6 +455,15 @@ function Balance() {
                       )
                     ) : (
                       <p>No returns found</p>
+                    )
+                  ) : selectedSubTab[activeCashier] === "Cash In/Out" ? (
+                    selectedLocObj.cashiers[activeCashier].inOuts?.length >
+                    0 ? (
+                      renderCashInOutTable(
+                        selectedLocObj.cashiers[activeCashier].inOuts,
+                      )
+                    ) : (
+                      <p>No cash in/out records</p>
                     )
                   ) : (
                     renderSummaryRow(selectedLocObj.cashiers[activeCashier])
