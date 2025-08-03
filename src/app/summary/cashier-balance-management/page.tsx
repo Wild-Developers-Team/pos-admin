@@ -5,7 +5,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { useEffect, useState } from "react";
 import { getSessionData } from "@/utils/session";
 import { postLoginRequest } from "@/services/api.service";
-import { ISummary } from "@/types";
+// import { ISummary } from "@/types";
 import { FILTERLIST, REFDATA } from "@/utils/apiMessage";
 import { showErrorAlert } from "@/utils/alert";
 import withAuth from "@/utils/withAuth";
@@ -13,7 +13,7 @@ import { ChevronDown, House } from "lucide-react";
 
 function Balance() {
   const [loading, setLoading] = useState(true);
-  const [balanceList, setBalanceList] = useState<ISummary[]>([]);
+  // const [balanceList, setBalanceList] = useState<ISummary[]>([]);
 
   const [privileges, setPrivileges] = useState({
     add: false,
