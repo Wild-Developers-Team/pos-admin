@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { getSessionData } from "@/utils/session";
 import { postLoginRequest } from "@/services/api.service";
 // import { ISummary } from "@/types";
-import { FILTERLIST, REFDATA } from "@/utils/apiMessage";
+import { FILTERLIST, REFDATA, VIEW } from "@/utils/apiMessage";
 import { showErrorAlert } from "@/utils/alert";
 import withAuth from "@/utils/withAuth";
 import { ChevronDown, House } from "lucide-react";
@@ -45,6 +45,9 @@ function Balance() {
   const [inputToDate, setInputToDate] = useState("");
 
   const [grandSummary, setGrandSummary] = useState<any>(null);
+
+  const [showSaleModal, setShowSaleModal] = useState(false);
+  const [saleDetails, setSaleDetails] = useState<any[]>([]);
 
   useEffect(() => {
     fetchReferenceData();
@@ -135,6 +138,33 @@ function Balance() {
     }
   };
 
+  // View more balance details
+  const handleViewBalance = async (
+    invoiceNumber: string,
+    type: "SALES" | "RETURNS",
+  ) => {
+    try {
+      const token = getSessionData("accessToken") || "";
+      const username = getSessionData("userProfile")?.username || "";
+      const response = await postLoginRequest(
+        "api/v1/cash-book/cashier-balance-view",
+        { invoiceNumber, type },
+        VIEW,
+        token,
+        username,
+      );
+
+      if (response.success && response.data) {
+        setSaleDetails(response.data);
+        setShowSaleModal(true);
+      } else {
+        showErrorAlert(response.message);
+      }
+    } catch (error) {
+      console.error("View error:", error);
+    }
+  };
+
   // Style active/inactive cashier buttons
   const getButtonClass = (key: string) => {
     return `rounded-xl px-4 py-2 text-sm font-semibold ${
@@ -170,24 +200,24 @@ function Balance() {
           </thead>
           <tbody>
             <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
-              <td className="px-6 py-2">Total Returns</td>
-              <td className="px-6 py-2">{summary.totalReturns ?? 0}</td>
-            </tr>
-            <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
               <td className="px-6 py-2">Total Cash In</td>
               <td className="px-6 py-2">{summary.totalCashIn ?? 0}</td>
             </tr>
             <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
-              <td className="px-6 py-2">Balance</td>
-              <td className="px-6 py-2">{summary.balance ?? 0}</td>
+              <td className="px-6 py-2">Total Cash Out</td>
+              <td className="px-6 py-2">{summary.totalCashOut ?? 0}</td>
+            </tr>
+            <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
+              <td className="px-6 py-2">Total Returns</td>
+              <td className="px-6 py-2">{summary.totalReturns ?? 0}</td>
             </tr>
             <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
               <td className="px-6 py-2">Total Sales</td>
               <td className="px-6 py-2">{summary.totalSales ?? 0}</td>
             </tr>
             <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
-              <td className="px-6 py-2">Total Cash Out</td>
-              <td className="px-6 py-2">{summary.totalCashOut ?? 0}</td>
+              <td className="px-6 py-2">Total Balance</td>
+              <td className="px-6 py-2">{summary.balance ?? 0}</td>
             </tr>
           </tbody>
         </table>
@@ -213,7 +243,8 @@ function Balance() {
           {sales.map((s, idx) => (
             <tr
               key={idx}
-              className="border-t bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+              className="cursor-pointer border-t bg-gray-50 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+              onClick={() => handleViewBalance(s.invoiceNumber, "SALES")}
             >
               <td className="px-4 py-2">{s.invoiceNumber}</td>
               <td className="px-4 py-2">
@@ -255,7 +286,10 @@ function Balance() {
           {returns.map((r, idx) => (
             <tr
               key={idx}
-              className="border-t bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+              className="cursor-pointer border-t bg-gray-50 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+              onClick={() =>
+                handleViewBalance(r.billing?.invoiceNumber, "RETURNS")
+              }
             >
               <td className="px-4 py-2">{r.billing?.invoiceNumber}</td>
               <td className="px-4 py-2">{r.remark || "-"}</td>
@@ -476,6 +510,93 @@ function Balance() {
           </>
         )}
       </div>
+      {showSaleModal && (
+        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="relative m-2 max-h-[90vh] w-full max-w-7xl overflow-y-auto rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+            {/* Close Icon Top-Right */}
+            <button
+              onClick={() => setShowSaleModal(false)}
+              className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
+            >
+              <span className="sr-only">Close</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
+            {/* Header */}
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+                Sale Details
+              </h2>
+            </div>
+            <div className="hide-scrollbar overflow-x-auto rounded-xl border dark:border-gray-700">
+              <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
+                <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th className="px-4 py-2">Item Code</th>
+                    <th className="px-4 py-2">Name</th>
+                    <th className="px-4 py-2">Item Cost</th>
+                    <th className="px-4 py-2">Label Price</th>
+                    <th className="px-4 py-2">Retail Price</th>
+                    <th className="px-4 py-2">Wholesale Price</th>
+                    <th className="px-4 py-2">Sales Price</th>
+                    <th className="px-4 py-2">Sales Discount</th>
+                    <th className="px-4 py-2">Retail Discount</th>
+                    <th className="px-4 py-2">Wholesale Discount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {saleDetails.map((detail, idx) => (
+                    <tr
+                      key={idx}
+                      className="border-t bg-white  dark:border-gray-600 dark:bg-gray-800"
+                    >
+                      <td className="px-4 py-2">{detail.item?.code}</td>
+                      <td className="px-4 py-2">{detail.item?.description}</td>
+                      <td className="px-4 py-2 text-right">
+                        {detail.itemCost?.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {detail.lablePrice?.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {detail.retailPrice?.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {detail.wholesalePrice?.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {detail.salesPrice?.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {detail.salesDiscount?.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {detail.retailDiscount?.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {detail.wholesaleDiscount?.toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
     </DefaultLayout>
   );
 }
