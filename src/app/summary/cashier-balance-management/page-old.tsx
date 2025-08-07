@@ -5,7 +5,6 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { useEffect, useState } from "react";
 import { getSessionData } from "@/utils/session";
 import { postLoginRequest } from "@/services/api.service";
-// import { ISummary } from "@/types";
 import { FILTERLIST, REFDATA, VIEW } from "@/utils/apiMessage";
 import { showErrorAlert } from "@/utils/alert";
 import withAuth from "@/utils/withAuth";
@@ -13,7 +12,6 @@ import { ChevronDown, House } from "lucide-react";
 
 function Balance() {
   const [loading, setLoading] = useState(true);
-  // const [balanceList, setBalanceList] = useState<ISummary[]>([]);
 
   const [privileges, setPrivileges] = useState({
     add: false,
@@ -51,6 +49,77 @@ function Balance() {
 
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [returnDetails, setReturnDetails] = useState<any[]>([]);
+
+  const handlePrint = (tableId: string) => {
+    const content = document.getElementById(tableId);
+    const printWindow = window.open("", "", "height=700,width=900");
+
+    if (printWindow && content) {
+      const now = new Date();
+      const dateTimeString = now.toLocaleString();
+
+      printWindow.document.write(`
+      <html>
+        <head>
+          <title>Invoice</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            thead { background-color: #f5f5f5; }
+            @media print {
+              .no-print {
+               display: none !important;
+                  }
+             }
+            .header, .footer { width: 100%; }
+            .header { border-bottom: 1px solid #ccc; padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+            .footer { margin-top: 48px; font-size: 14px; color: #4b5563; }
+            .footer .signature { margin-top: 48px; }
+            .footer .signature .line { width: 192px; border-top: 1px solid #000; padding-top: 8px; }
+            .notes { margin-top: 40px; font-size: 14px; color: #4b5563; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <div style="margin-top: 8px; font-size: 20px; font-weight: bold;">DPD Chemical</div>
+              <div style="font-size: 14px; color: #4b5563;">Pemaduwa, Anuradhapura</div>
+              <div style="font-size: 14px; color: #4b5563;">078 6065410 / 025 3133969</div>
+              <div style="font-size: 14px; color: #4b5563;">nimeshkalharapk@gmail.com</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 14px;">${dateTimeString}</div>
+            </div>
+          </div>
+
+          <div id="billContent">
+            ${content.innerHTML}
+          </div>
+
+          <div class="footer">
+            <div class="signature">
+              <div class="line">Authorized Signature</div>
+              <div style="margin-top: 16px; font-size: 12px;">
+                Date: ________________________
+              </div>
+            </div>
+
+            <div class="notes">
+              <p style="font-weight: 600;">NOTES:</p>
+              <p>Please verify items upon receipt.</br>Report any missing/damaged items within 24hrs.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
+
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }
+  };
 
   useEffect(() => {
     fetchReferenceData();
@@ -245,110 +314,153 @@ function Balance() {
 
   // Render sales table
   const renderSalesTable = (sales: any[]) => (
-    <div className="overflow-x-auto rounded-xl border dark:border-gray-700">
-      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
-        <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th className="px-4 py-2 text-left">Invoice</th>
-            <th className="px-4 py-2 text-left">Customer</th>
-            <th className="px-4 py-2 text-left">Payment</th>
-            <th className="px-4 py-2 text-left">Sales Type</th>
-            <th className="px-4 py-2 text-right">Amount</th>
-            <th className="px-4 py-2 text-right">Paid</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sales.map((s, idx) => (
-            <tr
-              key={idx}
-              className="cursor-pointer border-t bg-gray-50 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-              onClick={() => handleViewBalance(s.invoiceNumber, "SALES")}
-            >
-              <td className="px-4 py-2">{s.invoiceNumber}</td>
-              <td className="px-4 py-2">
-                {s.customer?.titleDescription} {s.customer?.firstName}{" "}
-                {s.customer?.lastName}
-              </td>
-              <td className="px-4 py-2">{s.paymentTypeDescription}</td>
-              <td className="px-4 py-2">{s.salesTypeDescription}</td>
-              <td className="px-4 py-2 text-right">
-                {s.totalAmount?.toFixed(2)}
-              </td>
-              <td className="px-4 py-2 text-right">
-                {s.payAmount?.toFixed(2)}
-              </td>
+    <div>
+      <div
+        id="sales-table"
+        className="overflow-x-auto rounded-xl border dark:border-gray-700"
+      >
+        <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
+          <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th className="px-4 py-2 text-left">Invoice</th>
+              <th className="px-4 py-2 text-left">Customer</th>
+              <th className="px-4 py-2 text-left">Payment</th>
+              <th className="px-4 py-2 text-left">Sales Type</th>
+              <th className="px-4 py-2 text-right">Amount</th>
+              <th className="px-4 py-2 text-right">Paid</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sales.map((s, idx) => (
+              <tr
+                key={idx}
+                className="cursor-pointer border-t bg-gray-50 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+                onClick={() => handleViewBalance(s.invoiceNumber, "SALES")}
+              >
+                <td className="px-4 py-2">{s.invoiceNumber}</td>
+                <td className="px-4 py-2">
+                  {s.customer?.titleDescription} {s.customer?.firstName}{" "}
+                  {s.customer?.lastName}
+                </td>
+                <td className="px-4 py-2">{s.paymentTypeDescription}</td>
+                <td className="px-4 py-2">{s.salesTypeDescription}</td>
+                <td className="px-4 py-2 text-right">
+                  {s.totalAmount?.toFixed(2)}
+                </td>
+                <td className="px-4 py-2 text-right">
+                  {s.payAmount?.toFixed(2)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="mb-2 mt-2 flex justify-end">
+        <button
+          onClick={() => handlePrint("sales-table")}
+          className="rounded-xl bg-primary px-4 py-2 text-xs text-white hover:bg-hover md:text-sm"
+        >
+          Print Sales
+        </button>
+      </div>
     </div>
   );
 
   // Render returns table
   const renderReturnsTable = (returns: any[]) => (
-    <div className="overflow-x-auto rounded-xl border dark:border-gray-700">
-      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
-        <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th className="px-4 py-2 text-left">Invoice</th>
-            <th className="px-4 py-2 text-left">Remark</th>
-            <th className="px-4 py-2 text-left">Customer</th>
-            <th className="px-4 py-2 text-right">Debit Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {returns.map((r, idx) => (
-            <tr
-              key={idx}
-              className="cursor-pointer border-t bg-gray-50 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-              onClick={() => handleViewBalance(r.invoiceNumber, "RETURNS")}
-            >
-              <td className="px-4 py-2">{r.invoiceNumber}</td>
-              <td className="px-4 py-2">{r.remark || "Unavailable"}</td>
-              <td className="px-4 py-2">
-                {r.customer?.titleDescription} {r.customer?.firstName}{" "}
-                {r.customer?.lastName}
-              </td>
-              <td className="px-4 py-2 text-right">
-                {r.debitAmount?.toFixed(2) ?? 0}
-              </td>
+    <div>
+      <div
+        id="return-table"
+        className="overflow-x-auto rounded-xl border dark:border-gray-700"
+      >
+        <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
+          <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th className="px-4 py-2 text-left">Invoice</th>
+              <th className="px-4 py-2 text-left">Remark</th>
+              <th className="px-4 py-2 text-left">Customer</th>
+              <th className="px-4 py-2 text-right">Debit Amount</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {returns.map((r, idx) => (
+              <tr
+                key={idx}
+                className="cursor-pointer border-t bg-gray-50 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+                onClick={() => handleViewBalance(r.invoiceNumber, "RETURNS")}
+              >
+                <td className="px-4 py-2">{r.invoiceNumber}</td>
+                <td className="px-4 py-2">{r.remark || "Unavailable"}</td>
+                <td className="px-4 py-2">
+                  {r.customer?.titleDescription} {r.customer?.firstName}{" "}
+                  {r.customer?.lastName}
+                </td>
+                <td className="px-4 py-2 text-right">
+                  {r.debitAmount?.toFixed(2) ?? 0}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="mb-2 mt-2 flex justify-end">
+        <button
+          onClick={() => handlePrint("return-table")}
+          className="rounded-xl bg-primary px-4 py-2 text-xs text-white hover:bg-hover md:text-sm"
+        >
+          Print Returns
+        </button>
+      </div>
     </div>
   );
 
   // Render cash in/out table
   const renderCashInOutTable = (inOuts: any[]) => (
-    <div className="overflow-x-auto rounded-xl border dark:border-gray-700">
-      <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
-        <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            {/* <th className="px-4 py-2">ID</th> */}
-            <th className="px-4 py-2">Type</th>
-            <th className="px-4 py-2">Description</th>
-            <th className="px-4 py-2">Remark</th>
-            <th className="px-4 py-2 text-right">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {inOuts.map((entry, idx) => (
-            <tr
-              key={idx}
-              className="border-t bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
-            >
-              {/* <td className="px-4 py-2">{entry.id}</td> */}
-              <td className="px-4 py-2">{entry.cashInOut}</td>
-              <td className="px-4 py-2">{entry.cashInOutDescription}</td>
-              <td className="px-4 py-2">{entry.remark}</td>
-              <td className="px-4 py-2 text-right">
-                {entry.amount?.toFixed(2)}
-              </td>
+    <div>
+      <div
+        id="cashInOut-table"
+        className="overflow-x-auto rounded-xl border dark:border-gray-700"
+      >
+        <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
+          <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              {/* <th className="px-4 py-2">ID</th> */}
+              <th className="px-4 py-2">Type</th>
+              <th className="px-4 py-2">Description</th>
+              <th className="px-4 py-2">Remark</th>
+              <th className="px-4 py-2 text-right">Amount</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {inOuts
+              .filter(
+                (entry) =>
+                  entry?.amount !== null && entry?.amount !== undefined,
+              )
+              .map((entry, idx) => (
+                <tr
+                  key={idx}
+                  className="border-t bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <td className="px-4 py-2">{entry?.cashInOut}</td>
+                  <td className="px-4 py-2">{entry?.cashInOutDescription}</td>
+                  <td className="px-4 py-2">{entry?.remark}</td>
+                  <td className="px-4 py-2 text-right">
+                    {entry?.amount?.toFixed(2)}
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="mb-2 mt-2 flex justify-end">
+        <button
+          onClick={() => handlePrint("cashInOut-table")}
+          className="rounded-xl bg-primary px-4 py-2 text-xs text-white hover:bg-hover md:text-sm"
+        >
+          Print Cash In/Out
+        </button>
+      </div>
     </div>
   );
 
@@ -545,16 +657,19 @@ function Balance() {
                 Sale Details
               </h2>
             </div>
-            <div className="hide-scrollbar overflow-x-auto rounded-xl border dark:border-gray-700">
+            <div
+              id="sales-details-table"
+              className="hide-scrollbar overflow-x-auto rounded-xl border dark:border-gray-700"
+            >
               <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
                 <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
                     <th className="px-4 py-2">Item Code</th>
                     <th className="px-4 py-2">Name</th>
-                    <th className="px-4 py-2">Item Cost</th>
+                    <th className="no-print px-4 py-2">Item Cost</th>
                     <th className="px-4 py-2">Label Price</th>
-                    <th className="px-4 py-2">Retail Price</th>
-                    <th className="px-4 py-2">Wholesale Price</th>
+                    <th className="no-print px-4 py-2">Retail Price</th>
+                    <th className="no-print px-4 py-2">Wholesale Price</th>
                     <th className="px-4 py-2">Sales Price</th>
                     <th className="px-4 py-2">Quantity</th>
                     <th className="px-4 py-2">Total Price</th>
@@ -568,16 +683,16 @@ function Balance() {
                     >
                       <td className="px-4 py-2">{detail.item?.code}</td>
                       <td className="px-4 py-2">{detail.item?.description}</td>
-                      <td className="px-4 py-2 text-right">
+                      <td className="no-print px-4 py-2 text-right">
                         {detail.itemCost?.toFixed(2)}
                       </td>
                       <td className="px-4 py-2 text-right">
                         {detail.lablePrice?.toFixed(2)}
                       </td>
-                      <td className="px-4 py-2 text-right">
+                      <td className="no-print px-4 py-2 text-right">
                         {detail.retailPrice?.toFixed(2)}
                       </td>
-                      <td className="px-4 py-2 text-right">
+                      <td className="no-print px-4 py-2 text-right">
                         {detail.wholesalePrice?.toFixed(2)}
                       </td>
                       <td className="px-4 py-2 text-right">
@@ -591,6 +706,14 @@ function Balance() {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="mb-2 mt-2 flex justify-end">
+              <button
+                onClick={() => handlePrint("sales-details-table")}
+                className="rounded-xl bg-primary px-4 py-2 text-xs text-white hover:bg-hover md:text-sm"
+              >
+                Print Sale Details
+              </button>
             </div>
           </div>
         </div>
@@ -628,7 +751,10 @@ function Balance() {
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto rounded-xl border dark:border-gray-700">
+            <div
+              id="returns-details-table"
+              className="overflow-x-auto rounded-xl border dark:border-gray-700"
+            >
               <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
                 <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
@@ -648,6 +774,14 @@ function Balance() {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="mb-2 mt-2 flex justify-end">
+              <button
+                onClick={() => handlePrint("return-details-table")}
+                className="rounded-xl bg-primary px-4 py-2 text-xs text-white hover:bg-hover md:text-sm"
+              >
+                Print Return Details
+              </button>
             </div>
           </div>
         </div>

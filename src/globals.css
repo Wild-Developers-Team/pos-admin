@@ -97,33 +97,6 @@
   margin: 5px;
 }
 
-/* Bill Styles*/
-/* @media print {
-  body * {
-    visibility: hidden;
-  }
-
-  #bill-content, #bill-content * {
-    visibility: visible;
-  }
-
-  #bill-content {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 80mm !important;
-    max-width: 80mm !important;
-    padding: 0 !important;
-    margin: 0 auto;
-    font-size: 11px;
-  }
-
-  button {
-    display: none !important;
-  }
-} */
-
-
 /* Hide number input arrows */
 .no-spinner::-webkit-outer-spin-button,
 .no-spinner::-webkit-inner-spin-button {

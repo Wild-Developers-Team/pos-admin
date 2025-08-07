@@ -55,18 +55,64 @@ function Balance() {
     const printWindow = window.open("", "", "height=700,width=900");
 
     if (printWindow && content) {
-      printWindow.document.write("<html><head><title>Print Table</title>");
-      printWindow.document.write(
-        `<style>
-          body { font-family: sans-serif; padding: 20px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-          th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-          thead { background-color: #f5f5f5; }
-        </style>`,
-      );
-      printWindow.document.write("</head><body>");
-      printWindow.document.write(content.innerHTML);
-      printWindow.document.write("</body></html>");
+      const now = new Date();
+      const dateTimeString = now.toLocaleString();
+
+      printWindow.document.write(`
+      <html>
+        <head>
+          <title>Invoice</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            thead { background-color: #f5f5f5; }
+            @media print {
+              .no-print {
+               display: none !important;
+                  }
+             }
+            .header, .footer { width: 100%; }
+            .header { border-bottom: 1px solid #ccc; padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+            .footer { margin-top: 48px; font-size: 14px; color: #4b5563; }
+            .footer .signature { margin-top: 48px; }
+            .footer .signature .line { width: 192px; border-top: 1px solid #000; padding-top: 8px; }
+            .notes { margin-top: 40px; font-size: 14px; color: #4b5563; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <div style="margin-top: 8px; font-size: 20px; font-weight: bold;">DPD Chemical</div>
+              <div style="font-size: 14px; color: #4b5563;">Pemaduwa, Anuradhapura</div>
+              <div style="font-size: 14px; color: #4b5563;">078 6065410 / 025 3133969</div>
+              <div style="font-size: 14px; color: #4b5563;">nimeshkalharapk@gmail.com</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 14px;">${dateTimeString}</div>
+            </div>
+          </div>
+
+          <div id="billContent">
+            ${content.innerHTML}
+          </div>
+
+          <div class="footer">
+            <div class="signature">
+              <div class="line">Authorized Signature</div>
+              <div style="margin-top: 16px; font-size: 12px;">
+                Date: ________________________
+              </div>
+            </div>
+
+            <div class="notes">
+              <p style="font-weight: 600;">NOTES:</p>
+              <p>Please verify items upon receipt.</br>Report any missing/damaged items within 24hrs.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
 
       printWindow.document.close();
       printWindow.focus();
@@ -260,6 +306,34 @@ function Balance() {
                 Rs. {(summary.balance ?? 0).toFixed(2)}
               </td>
             </tr>
+            {activeCashier !== "all" && (
+              <>
+                <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
+                  <td className="px-6 py-2 font-medium text-gray-700 dark:text-gray-300">
+                    Cashier Closing Balance
+                  </td>
+                  <td className="px-6 py-2 text-gray-900 dark:text-white">
+                    Rs.{" "}
+                    {(
+                      selectedLocObj?.cashiers?.[activeCashier]?.cashierBalance
+                        ?.amount ?? 0
+                    ).toFixed(2)}
+                  </td>
+                </tr>
+                <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
+                  <td className="px-6 py-2 font-medium text-gray-700 dark:text-gray-300">
+                    Balance Amount
+                  </td>
+                  <td className="px-6 py-2 text-gray-900 dark:text-white">
+                    Rs.{" "}
+                    {(
+                      selectedLocObj?.cashiers?.[activeCashier]
+                        ?.balanceAmount ?? 0
+                    ).toFixed(2)}
+                  </td>
+                </tr>
+              </>
+            )}
           </tbody>
         </table>
       </div>
@@ -386,20 +460,24 @@ function Balance() {
             </tr>
           </thead>
           <tbody>
-            {inOuts.map((entry, idx) => (
-              <tr
-                key={idx}
-                className="border-t bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
-              >
-                {/* <td className="px-4 py-2">{entry.id}</td> */}
-                <td className="px-4 py-2">{entry.cashInOut}</td>
-                <td className="px-4 py-2">{entry.cashInOutDescription}</td>
-                <td className="px-4 py-2">{entry.remark}</td>
-                <td className="px-4 py-2 text-right">
-                  {entry.amount?.toFixed(2)}
-                </td>
-              </tr>
-            ))}
+            {inOuts
+              .filter(
+                (entry) =>
+                  entry?.amount !== null && entry?.amount !== undefined,
+              )
+              .map((entry, idx) => (
+                <tr
+                  key={idx}
+                  className="border-t bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <td className="px-4 py-2">{entry?.cashInOut}</td>
+                  <td className="px-4 py-2">{entry?.cashInOutDescription}</td>
+                  <td className="px-4 py-2">{entry?.remark}</td>
+                  <td className="px-4 py-2 text-right">
+                    {entry?.amount?.toFixed(2)}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
@@ -616,10 +694,10 @@ function Balance() {
                   <tr>
                     <th className="px-4 py-2">Item Code</th>
                     <th className="px-4 py-2">Name</th>
-                    <th className="px-4 py-2">Item Cost</th>
+                    <th className="no-print px-4 py-2">Item Cost</th>
                     <th className="px-4 py-2">Label Price</th>
-                    <th className="px-4 py-2">Retail Price</th>
-                    <th className="px-4 py-2">Wholesale Price</th>
+                    <th className="no-print px-4 py-2">Retail Price</th>
+                    <th className="no-print px-4 py-2">Wholesale Price</th>
                     <th className="px-4 py-2">Sales Price</th>
                     <th className="px-4 py-2">Quantity</th>
                     <th className="px-4 py-2">Total Price</th>
@@ -633,16 +711,16 @@ function Balance() {
                     >
                       <td className="px-4 py-2">{detail.item?.code}</td>
                       <td className="px-4 py-2">{detail.item?.description}</td>
-                      <td className="px-4 py-2 text-right">
+                      <td className="no-print px-4 py-2 text-right">
                         {detail.itemCost?.toFixed(2)}
                       </td>
                       <td className="px-4 py-2 text-right">
                         {detail.lablePrice?.toFixed(2)}
                       </td>
-                      <td className="px-4 py-2 text-right">
+                      <td className="no-print px-4 py-2 text-right">
                         {detail.retailPrice?.toFixed(2)}
                       </td>
-                      <td className="px-4 py-2 text-right">
+                      <td className="no-print px-4 py-2 text-right">
                         {detail.wholesalePrice?.toFixed(2)}
                       </td>
                       <td className="px-4 py-2 text-right">
