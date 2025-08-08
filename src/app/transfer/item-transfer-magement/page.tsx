@@ -59,7 +59,6 @@ function NewTransfer() {
       element.style.height = "auto";
       element.style.overflow = "visible";
 
-      // Give time for layout to apply
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const canvas = await html2canvas(element, {
@@ -74,9 +73,24 @@ function NewTransfer() {
       const pdf = new jsPDF("p", "mm", "a4");
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      // First page
+      pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Additional pages
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
       pdf.save(`TransferInvoice_${Date.now()}.pdf`);
     } catch (error) {
       console.error("PDF generation failed:", error);
@@ -88,6 +102,94 @@ function NewTransfer() {
   };
 
   // Print functions
+  const handlePrint = (tableId: string, billTransferData: any) => {
+    const content = document.getElementById(tableId);
+    const printWindow = window.open("", "", "height=700,width=900");
+
+    if (printWindow && content) {
+      const now = new Date();
+      const dateTimeString = now.toLocaleString();
+
+      printWindow.document.write(`
+      <html>
+        <head>
+          <title>Transfer Invoice</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            thead { background-color: #f5f5f5; }
+            @media print {
+              .no-print { display: none !important; }
+            }
+            .header, .footer { width: 100%; }
+            .header { border-bottom: 1px solid #ccc; padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+            .footer { margin-top: 48px; font-size: 14px; color: #4b5563; }
+            .footer .signature { margin-top: 48px; }
+            .footer .signature .line { width: 192px; border-top: 1px solid #000; padding-top: 8px; }
+            .notes { margin-top: 40px; font-size: 14px; color: #4b5563; }
+            .location-table td { border: none; padding: 4px 8px; vertical-align: top; }
+            .location-table { margin-top: 16px; border-collapse: collapse; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <div style="margin-top: 8px; font-size: 20px; font-weight: bold;">DPD Chemical</div>
+              <div style="font-size: 14px; color: #4b5563;">Pemaduwa, Anuradhapura</div>
+              <div style="font-size: 14px; color: #4b5563;">078 6065410 / 025 3133969</div>
+              <div style="font-size: 14px; color: #4b5563;">nimeshkalharapk@gmail.com</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="margin-top: 8px; font-size: 20px; font-weight: bold;">TRANSFER INVOICE</div>
+              <div style="font-size: 14px;">${dateTimeString}</div>
+            </div>
+          </div>
+
+          <!-- FROM / TO LOCATION SECTION -->
+          <table class="location-table" style="width: 100%;">
+            <tbody>
+              <tr>
+                <td style="width: 80px; font-weight: bold;">From</td>
+                <td>: ${billTransferData.fromLocationLabel || ""}</td>
+              </tr>
+              <tr>
+                <td style="width: 80px; font-weight: bold;">To</td>
+                <td>: ${billTransferData.toLocationLabel || ""}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- MAIN CONTENT (ITEM TABLE) -->
+          <div id="billContent">
+            ${content.innerHTML}
+          </div>
+
+          <!-- FOOTER -->
+          <div class="footer">
+            <div class="signature">
+              <div class="line">Authorized Signature</div>
+              <div style="margin-top: 16px; font-size: 12px;">
+                Date: ________________________
+              </div>
+            </div>
+
+            <div class="notes">
+              <p style="font-weight: 600;">NOTES:</p>
+              <p>Please verify items upon receipt.</br>Report any missing/damaged items within 24hrs.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
+
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }
+  };
+
   const [showBillModal, setShowBillModal] = useState(false);
   const [billTransferData, setBillTransferData] = useState<any>(null);
 
@@ -1019,41 +1121,47 @@ function NewTransfer() {
             </div>
 
             {/* ITEM TABLE */}
-            <table className="mt-6 w-full table-auto border-collapse overflow-hidden text-sm">
-              <thead>
-                <tr className="bg-gray-200 text-left">
-                  <th className="border px-2 py-2.5">#</th>
-                  <th className="border px-2 py-2.5">Item Name</th>
-                  <th className="border px-2 py-2.5">Item Code</th>
-                  <th className="border px-2 py-2.5">Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                {billTransferData.cartItems.map((item: any, index: number) => (
-                  <tr key={index}>
-                    <td className="border px-2 py-1 text-center">
-                      {index + 1}
-                    </td>
-                    <td className="border px-2 py-2.5">{item.description}</td>
-                    <td className="border px-2 py-2.5">{item.itemCode}</td>
-                    <td className="border px-2 py-2.5 text-center">
-                      {item.qty}
-                    </td>
+            <div id="print-invoice">
+              <table className="mt-6 w-full table-auto border-collapse overflow-hidden text-sm">
+                <thead>
+                  <tr className="bg-gray-200 text-left">
+                    <th className="border px-2 py-2.5">#</th>
+                    <th className="border px-2 py-2.5">Item Name</th>
+                    <th className="border px-2 py-2.5">Item Code</th>
+                    <th className="border px-2 py-2.5">Quantity</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* TOTAL SUMMARY */}
-            <div className="mt-4 flex justify-end text-sm">
-              <table className="text-right">
+                </thead>
                 <tbody>
-                  <tr className="text-lg font-bold text-primary">
-                    <td className="pr-4">Total Items :</td>
-                    <td>{billTransferData.cartItems.length}</td>
-                  </tr>
+                  {billTransferData.cartItems.map(
+                    (item: any, index: number) => (
+                      <tr key={index}>
+                        <td className="border px-2 py-1 text-center">
+                          {index + 1}
+                        </td>
+                        <td className="border px-2 py-2.5">
+                          {item.description}
+                        </td>
+                        <td className="border px-2 py-2.5">{item.itemCode}</td>
+                        <td className="border px-2 py-2.5 text-center">
+                          {item.qty}
+                        </td>
+                      </tr>
+                    ),
+                  )}
                 </tbody>
               </table>
+
+              {/* TOTAL SUMMARY */}
+              <div className="mt-4 flex justify-end text-sm">
+                <table className="text-right">
+                  <tbody>
+                    <tr className="text-lg font-bold text-primary">
+                      <td className="pr-4">Total Items :</td>
+                      <td>{billTransferData.cartItems.length}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             {/* SIGNATURE AREA */}
@@ -1083,7 +1191,7 @@ function NewTransfer() {
                 Close
               </button>
               <button
-                onClick={() => window.print()}
+                onClick={() => handlePrint("print-invoice", billTransferData)}
                 className="w-40 rounded-2xl bg-primary px-4 py-2 text-white hover:bg-hover"
               >
                 Print

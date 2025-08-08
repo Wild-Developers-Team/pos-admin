@@ -354,8 +354,8 @@ function Balance() {
               <th className="px-4 py-2 text-left">Customer</th>
               <th className="px-4 py-2 text-left">Payment</th>
               <th className="px-4 py-2 text-left">Sales Type</th>
-              <th className="px-4 py-2 text-right">Amount</th>
               <th className="px-4 py-2 text-right">Paid</th>
+              <th className="px-4 py-2 text-right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -373,10 +373,10 @@ function Balance() {
                 <td className="px-4 py-2">{s.paymentTypeDescription}</td>
                 <td className="px-4 py-2">{s.salesTypeDescription}</td>
                 <td className="px-4 py-2 text-right">
-                  {s.totalAmount?.toFixed(2)}
+                  {s.payAmount?.toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-right">
-                  {s.payAmount?.toFixed(2)}
+                  {s.totalAmount?.toFixed(2)}
                 </td>
               </tr>
             ))}
@@ -694,13 +694,17 @@ function Balance() {
                   <tr>
                     <th className="px-4 py-2">Item Code</th>
                     <th className="px-4 py-2">Name</th>
-                    <th className="no-print px-4 py-2">Item Cost</th>
-                    <th className="px-4 py-2">Label Price</th>
-                    <th className="no-print px-4 py-2">Retail Price</th>
-                    <th className="no-print px-4 py-2">Wholesale Price</th>
-                    <th className="px-4 py-2">Sales Price</th>
-                    <th className="px-4 py-2">Quantity</th>
-                    <th className="px-4 py-2">Total Price</th>
+                    <th className="no-print px-4 py-2 text-right">Item Cost</th>
+                    <th className="px-4 py-2 text-right">Label Price</th>
+                    <th className="no-print px-4 py-2 text-right">
+                      Retail Price
+                    </th>
+                    <th className="no-print px-4 py-2 text-right">
+                      Wholesale Price
+                    </th>
+                    <th className="px-4 py-2 text-right">Sales Price</th>
+                    <th className="px-4 py-2 text-right">Quantity</th>
+                    <th className="px-4 py-2 text-right">Total Price</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -732,6 +736,23 @@ function Balance() {
                       </td>
                     </tr>
                   ))}
+                  <tr className="border-t bg-gray-100 font-semibold dark:bg-gray-700">
+                    <td className="px-4 py-2 text-left">Total</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td className="no-print"></td>
+                    <td className="no-print"></td>
+                    <td className="no-print"></td>
+                    <td className="px-4 py-2 text-right">
+                      {saleDetails.reduce((sum, d) => sum + (d.qty || 0), 0)}
+                    </td>
+                    <td className="px-4 py-2 text-right">
+                      {saleDetails
+                        .reduce((sum, d) => sum + (d.totalPrice || 0), 0)
+                        .toFixed(2)}
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>

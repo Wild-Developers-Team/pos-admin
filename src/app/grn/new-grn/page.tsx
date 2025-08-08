@@ -105,7 +105,6 @@ function NewGRN() {
       element.style.height = "auto";
       element.style.overflow = "visible";
 
-      // Give time for layout to apply
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const canvas = await html2canvas(element, {
@@ -120,9 +119,24 @@ function NewGRN() {
       const pdf = new jsPDF("p", "mm", "a4");
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      // First page
+      pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Additional pages
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
       pdf.save(`TransferInvoice_${Date.now()}.pdf`);
     } catch (error) {
       console.error("PDF generation failed:", error);
@@ -130,6 +144,93 @@ function NewGRN() {
       // Restore original styles
       element.style.height = originalHeight;
       element.style.overflow = originalOverflow;
+    }
+  };
+
+  // Print functions
+  const handlePrint = (tableId: string, printData: any) => {
+    const content = document.getElementById(tableId);
+    const printWindow = window.open("", "", "height=700,width=900");
+
+    if (printWindow && content) {
+      const now = new Date();
+      const dateTimeString = now.toLocaleString();
+
+      printWindow.document.write(`
+      <html>
+        <head>
+          <title>Invoice</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            thead { background-color: #f5f5f5; }
+            @media print {
+              .no-print {
+                display: none !important;
+              }
+            }
+            .header, .footer { width: 100%; }
+            .header { border-bottom: 1px solid #ccc; padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+            .footer { margin-top: 48px; font-size: 14px; color: #4b5563; }
+            .footer .signature { margin-top: 48px; }
+            .footer .signature .line { width: 192px; border-top: 1px solid #000; padding-top: 8px; }
+            .notes { margin-top: 40px; font-size: 14px; color: #4b5563; }
+            .bill-to-ship { margin-top: 16px; display: flex; justify-content: space-between; font-size: 14px; }
+            .bill-to-ship div { max-width: 100%; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <div style="margin-top: 8px; font-size: 20px; font-weight: bold;">DPD Chemical</div>
+              <div style="font-size: 14px; color: #4b5563;">Pemaduwa, Anuradhapura</div>
+              <div style="font-size: 14px; color: #4b5563;">078 6065410 / 025 3133969</div>
+              <div style="font-size: 14px; color: #4b5563;">nimeshkalharapk@gmail.com</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="margin-top: 8px; font-size: 20px; font-weight: bold;">GRN INVOICE</div>
+              <div style="font-size: 14px;">${dateTimeString}</div>
+            </div>
+          </div>
+
+          <div class="bill-to-ship">
+            <div>
+              <div style="font-weight: 600;">BILL TO</div>
+              <div>${printData.supplier || ""}</div>
+              <div>${printData.location || ""}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 600;">SHIP TO</div>
+              <div>${printData.location || ""}</div>
+            </div>
+          </div>
+
+          <div id="billContent">
+            ${content.innerHTML}
+          </div>
+
+          <div class="footer">
+            <div class="signature">
+              <div class="line">Authorized Signature</div>
+              <div style="margin-top: 16px; font-size: 12px;">
+                Date: ________________________
+              </div>
+            </div>
+
+            <div class="notes">
+              <p style="font-weight: 600;">NOTES:</p>
+              <p>Please verify items upon receipt.</br>Report any missing/damaged items within 24hrs.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
+
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
     }
   };
 
@@ -2103,83 +2204,85 @@ function NewGRN() {
             </div>
 
             {/* ITEM TABLE */}
-            <table className="mt-6 w-full table-auto border-collapse overflow-hidden text-sm">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="border px-2 py-1">#</th>
-                  {/* <th className="border px-2 py-1">Code</th> */}
-                  <th className="border px-2 py-2.5">Item</th>
-                  <th className="border px-2 py-2.5">Qty</th>
-                  <th className="border px-2 py-2.5">Cost</th>
-                  <th className="border px-2 py-2.5">Label</th>
-                  <th className="border px-2 py-2.5">Retail</th>
-                  <th className="border px-2 py-2.5">Wholesale</th>
-                  <th className="border px-2 py-2.5">Discount</th>
-                  <th className="border px-2 py-2.5">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {printData.items.map((item: any, index: number) => (
-                  <tr key={index} className="text-center">
-                    <td className="border px-2 py-2.5">{index + 1}</td>
-                    {/* <td className="border px-2 py-2.5">{item.itemCode}</td> */}
-                    <td className="border px-2 py-2.5">{item.description}</td>
-                    <td className="border px-2 py-2.5">{item.qty}</td>
-                    <td className="border px-2 py-2.5">
-                      {item.itemCost.toFixed(2)}
-                    </td>
-                    <td className="border px-2 py-2.5">
-                      {item.lablePrice.toFixed(2)}
-                    </td>
-                    <td className="border px-2 py-2.5">
-                      {item.salePrice.toFixed(2)}
-                    </td>
-                    <td className="border px-2 py-2.5">
-                      {item.wholesalePrice.toFixed(2)}
-                    </td>
-                    <td className="border px-2 py-2.5">
-                      {item.lablePrice > 0
-                        ? `${(((item.lablePrice - item.itemCost) / item.lablePrice) * 100).toFixed(2)}%`
-                        : "0.00%"}
-                    </td>
-                    <td className="border px-2 py-2.5">
-                      {(item.itemCost * item.qty).toFixed(2)}
-                    </td>
+            <div id="print-invoice">
+              <table className="mt-6 w-full table-auto border-collapse overflow-hidden text-sm">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="border px-2 py-1">#</th>
+                    {/* <th className="border px-2 py-1">Code</th> */}
+                    <th className="border px-2 py-2.5">Item</th>
+                    <th className="border px-2 py-2.5">Qty</th>
+                    <th className="border px-2 py-2.5">Cost</th>
+                    <th className="border px-2 py-2.5">Label</th>
+                    <th className="border px-2 py-2.5">Retail</th>
+                    <th className="border px-2 py-2.5">Wholesale</th>
+                    <th className="border px-2 py-2.5">Discount</th>
+                    <th className="border px-2 py-2.5">Total</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* TOTAL SUMMARY */}
-            <div className="mt-4 flex justify-end text-sm">
-              <table className="text-right">
+                </thead>
                 <tbody>
-                  <tr>
-                    <td className="pr-4">Subtotal :</td>
-                    <td>Rs. {printData.total.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td className="pr-4">Paid :</td>
-                    <td>Rs. {printData.paid || "0.00"}</td>
-                  </tr>
-                  <tr>
-                    <td className="pr-4">Discount :</td>
-                    <td>Rs. 0.00</td>
-                  </tr>
-                  <tr>
-                    <td className="pr-4">Tax :</td>
-                    <td>Rs. 0.00</td>
-                  </tr>
-                  <tr>
-                    <td className="pr-4">Shipping :</td>
-                    <td>Rs. 0.00</td>
-                  </tr>
-                  <tr className="text-lg font-bold text-primary">
-                    <td className="pr-4">Balance Due :</td>
-                    <td>Rs. {printData.credit.toFixed(2)}</td>
-                  </tr>
+                  {printData.items.map((item: any, index: number) => (
+                    <tr key={index} className="text-center">
+                      <td className="border px-2 py-2.5">{index + 1}</td>
+                      {/* <td className="border px-2 py-2.5">{item.itemCode}</td> */}
+                      <td className="border px-2 py-2.5">{item.description}</td>
+                      <td className="border px-2 py-2.5">{item.qty}</td>
+                      <td className="border px-2 py-2.5">
+                        {item.itemCost.toFixed(2)}
+                      </td>
+                      <td className="border px-2 py-2.5">
+                        {item.lablePrice.toFixed(2)}
+                      </td>
+                      <td className="border px-2 py-2.5">
+                        {item.salePrice.toFixed(2)}
+                      </td>
+                      <td className="border px-2 py-2.5">
+                        {item.wholesalePrice.toFixed(2)}
+                      </td>
+                      <td className="border px-2 py-2.5">
+                        {item.lablePrice > 0
+                          ? `${(((item.lablePrice - item.itemCost) / item.lablePrice) * 100).toFixed(2)}%`
+                          : "0.00%"}
+                      </td>
+                      <td className="border px-2 py-2.5">
+                        {(item.itemCost * item.qty).toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
+
+              {/* TOTAL SUMMARY */}
+              <div className="mt-4 flex justify-end text-sm">
+                <table className="text-right">
+                  <tbody>
+                    <tr>
+                      <td className="pr-4">Subtotal :</td>
+                      <td>Rs. {printData.total.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td className="pr-4">Paid :</td>
+                      <td>Rs. {printData.paid || "0.00"}</td>
+                    </tr>
+                    <tr>
+                      <td className="pr-4">Discount :</td>
+                      <td>Rs. 0.00</td>
+                    </tr>
+                    <tr>
+                      <td className="pr-4">Tax :</td>
+                      <td>Rs. 0.00</td>
+                    </tr>
+                    <tr>
+                      <td className="pr-4">Shipping :</td>
+                      <td>Rs. 0.00</td>
+                    </tr>
+                    <tr className="text-lg font-bold text-primary">
+                      <td className="pr-4">Balance Due :</td>
+                      <td>Rs. {printData.credit.toFixed(2)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             {/* SIGNATURE AREA */}
@@ -2203,7 +2306,7 @@ function NewGRN() {
                 Close
               </button>
               <button
-                onClick={() => window.print()}
+                onClick={() => handlePrint("print-invoice", printData)}
                 className="w-40 rounded-2xl bg-primary px-4 py-2 text-white hover:bg-hover"
               >
                 Print
