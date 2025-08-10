@@ -109,6 +109,7 @@ function NewTransfer() {
     if (printWindow && content) {
       const now = new Date();
       const dateTimeString = now.toLocaleString();
+      const logoUrl = `${window.location.origin}/admin/images/dpd.png`;
 
       printWindow.document.write(`
       <html>
@@ -135,6 +136,7 @@ function NewTransfer() {
         <body>
           <div class="header">
             <div>
+              <img id="print-logo" src="${logoUrl}" alt="Company Logo" style="height: 60px; margin-bottom: 8px;" />
               <div style="margin-top: 8px; font-size: 20px; font-weight: bold;">DPD Chemical</div>
               <div style="font-size: 14px; color: #4b5563;">Pemaduwa, Anuradhapura</div>
               <div style="font-size: 14px; color: #4b5563;">078 6065410 / 025 3133969</div>
@@ -179,14 +181,23 @@ function NewTransfer() {
               <p>Please verify items upon receipt.</br>Report any missing/damaged items within 24hrs.</p>
             </div>
           </div>
+          <script>
+            const logo = document.getElementById('print-logo');
+            if (logo.complete) {
+              window.print();
+              window.close();
+            } else {
+              logo.onload = () => {
+                window.print();
+                window.close();
+              };
+            }
+          </script>
         </body>
       </html>
     `);
-
       printWindow.document.close();
       printWindow.focus();
-      printWindow.print();
-      printWindow.close();
     }
   };
 
