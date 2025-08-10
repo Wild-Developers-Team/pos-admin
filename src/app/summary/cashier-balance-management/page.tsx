@@ -276,6 +276,20 @@ function Balance() {
             </tr>
           </thead>
           <tbody>
+            {activeCashier !== "all" && (
+              <>
+                <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
+                  <td className="px-6 py-2">Opening Balance</td>
+                  <td className="px-6 py-2">
+                    Rs.{" "}
+                    {(
+                      selectedLocObj?.cashiers?.[activeCashier]?.openingBalance
+                        ?.amount ?? 0
+                    ).toFixed(2)}
+                  </td>
+                </tr>
+              </>
+            )}
             <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
               <td className="px-6 py-2">Total Cash In</td>
               <td className="px-6 py-2">
@@ -309,10 +323,8 @@ function Balance() {
             {activeCashier !== "all" && (
               <>
                 <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
-                  <td className="px-6 py-2 font-medium text-gray-700 dark:text-gray-300">
-                    Cashier Closing Balance
-                  </td>
-                  <td className="px-6 py-2 text-gray-900 dark:text-white">
+                  <td className="px-6 py-2">Cashier Closing Balance</td>
+                  <td className="px-6 py-2">
                     Rs.{" "}
                     {(
                       selectedLocObj?.cashiers?.[activeCashier]?.cashierBalance
@@ -320,16 +332,45 @@ function Balance() {
                     ).toFixed(2)}
                   </td>
                 </tr>
-                <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
-                  <td className="px-6 py-2 font-medium text-gray-700 dark:text-gray-300">
-                    Balance Amount
-                  </td>
-                  <td className="px-6 py-2 text-gray-900 dark:text-white">
+                {/* <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
+                  <td className="px-6 py-2">Balance Amount</td>
+                  <td className="px-6 py-2">
                     Rs.{" "}
                     {(
                       selectedLocObj?.cashiers?.[activeCashier]
                         ?.balanceAmount ?? 0
                     ).toFixed(2)}
+                  </td>
+                </tr> */}
+                <tr className="border-t bg-white text-center dark:border-gray-700 dark:bg-gray-800">
+                  <td className="px-6 py-2">Balance Amount</td>
+                  <td
+                    className={`px-6 py-2 font-semibold ${
+                      (selectedLocObj?.cashiers?.[activeCashier]
+                        ?.balanceAmount ?? 0) === 0
+                        ? "text-green-600"
+                        : (selectedLocObj?.cashiers?.[activeCashier]
+                              ?.balanceAmount ?? 0) < 0
+                          ? "text-yellow-500"
+                          : "text-red-600"
+                    }`}
+                  >
+                    {(() => {
+                      const value =
+                        selectedLocObj?.cashiers?.[activeCashier]
+                          ?.balanceAmount ?? 0;
+                      const message =
+                        value === 0
+                          ? "මුදල් ප්‍රමාණය සමබරයි"
+                          : value < 0
+                            ? "මුදල් ප්‍රමාණය අඩු වී ඇත"
+                            : "මුදල් ප්‍රමාණය වැඩි වී ඇත";
+                      return (
+                        <>
+                          Rs. {value.toFixed(2)} ({message})
+                        </>
+                      );
+                    })()}
                   </td>
                 </tr>
               </>
