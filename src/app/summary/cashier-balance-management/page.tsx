@@ -351,7 +351,7 @@ function Balance() {
                         ? "text-green-600"
                         : (selectedLocObj?.cashiers?.[activeCashier]
                               ?.balanceAmount ?? 0) < 0
-                          ? "text-yellow-500"
+                          ? "text-yellow-600"
                           : "text-red-600"
                     }`}
                   >
@@ -363,11 +363,11 @@ function Balance() {
                         value === 0
                           ? "මුදල් ප්‍රමාණය සමබරයි"
                           : value < 0
-                            ? "මුදල් ප්‍රමාණය අඩු වී ඇත"
-                            : "මුදල් ප්‍රමාණය වැඩි වී ඇත";
+                            ? "මුදල් ප්‍රමාණය වැඩි වී ඇත"
+                            : "මුදල් ප්‍රමාණය අඩු වී ඇත";
                       return (
                         <>
-                          Rs. {value.toFixed(2)} ({message})
+                          Rs. {Math.abs(value).toFixed(2)} ({message})
                         </>
                       );
                     })()}
