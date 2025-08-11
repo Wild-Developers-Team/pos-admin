@@ -137,7 +137,7 @@ export default function Login() {
           </div>
         </div>
 
-        <div className="flex max-w-md flex-col rounded-3xl border-2 border-primary bg-white px-6 py-8 shadow-md sm:px-6 md:px-8 lg:px-10">
+        <div className="flex max-w-md flex-col rounded-3xl border-2 border-primary bg-white bg-opacity-90 px-6 py-8 shadow-md sm:px-6 md:px-8 lg:px-10">
           <div className="self-center text-2xl font-medium text-gray-800 sm:text-3xl">
             Welcome Back
           </div>

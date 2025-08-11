@@ -90,14 +90,14 @@ function Profile() {
                 </span>
               )}
 
-              <div className="mx-auto mb-5.5 mt-4.5 grid max-w-94 grid-cols-2 rounded-xl border border-stroke py-2.5 shadow-1 dark:border-strokedark dark:bg-[#37404F]">
-                <div className="items-center justify-center gap-1 border-r border-stroke px-4 dark:border-strokedark">
+              <div className="mx-auto mb-5.5 mt-4.5 grid max-w-94 grid-cols-2 rounded-xl border border-stroke py-2.5 shadow-1 dark:border-gray-600 dark:bg-[#37404F]">
+                <div className="items-center justify-center gap-1 border-r border-stroke px-4 dark:border-gray-600">
                   <span className="block text-sm font-semibold text-black dark:text-white">
                     {userProfile.lastLoggedDate}
                   </span>
                   <span className="text-xs">Last Logged Date</span>
                 </div>
-                <div className="items-center justify-center gap-1 border-stroke px-4 dark:border-strokedark xsm:flex-row">
+                <div className="items-center justify-center gap-1 border-stroke px-4 dark:border-gray-600 xsm:flex-row">
                   <span className="block text-sm font-semibold text-black dark:text-white">
                     {userProfile.passwordExpiredDate}
                   </span>
@@ -109,7 +109,7 @@ function Profile() {
                 <div className="w-full max-w-3xl">
                   <div className="mx-auto">
                     <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2">
-                      <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm dark:border-strokedark dark:bg-[#37404F]">
+                      <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm dark:border-gray-600 dark:bg-[#37404F]">
                         <div className="absolute -bottom-2 -left-3 rotate-[-10deg]">
                           <User className="h-16 w-16 text-primary" />
                         </div>
@@ -121,7 +121,7 @@ function Profile() {
                         </p>
                       </div>
 
-                      <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm dark:border-strokedark dark:bg-[#37404F]">
+                      <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm dark:border-gray-600 dark:bg-[#37404F]">
                         <div className="absolute -bottom-1 -left-3 rotate-[-10deg]">
                           <Phone className="h-16 w-16 text-primary" />
                         </div>
@@ -133,7 +133,7 @@ function Profile() {
                         </p>
                       </div>
 
-                      <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm dark:border-strokedark dark:bg-[#37404F]">
+                      <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm dark:border-gray-600 dark:bg-[#37404F]">
                         <div className="absolute -bottom-2 -left-3 rotate-[-10deg]">
                           <IdCard className="h-16 w-16 text-primary" />
                         </div>
@@ -145,7 +145,7 @@ function Profile() {
                         </p>
                       </div>
 
-                      <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm dark:border-strokedark dark:bg-[#37404F]">
+                      <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm dark:border-gray-600 dark:bg-[#37404F]">
                         <div className="absolute -bottom-2 -left-3 rotate-[-10deg]">
                           <Mail className="h-16 w-16 text-primary" />
                         </div>

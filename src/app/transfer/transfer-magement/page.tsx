@@ -128,6 +128,32 @@ function Transfer() {
     );
   };
 
+  const formatDateForApi = (val: string | Date | null | undefined) => {
+    if (!val) return "";
+    if (val instanceof Date) {
+      const y = val.getFullYear();
+      const m = String(val.getMonth() + 1).padStart(2, "0");
+      const d = String(val.getDate()).padStart(2, "0");
+      return `${y}/${m}/${d}`;
+    }
+    if (typeof val === "string") {
+      // if it's "YYYY-MM-DD" (from <input type=date>) -> "YYYY/MM/DD"
+      if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val.replace(/-/g, "/");
+      // if it's ISO "YYYY-MM-DDTHH:mm:ss.sssZ" -> extract Y/M/D
+      const iso = val.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (iso) return `${iso[1]}/${iso[2]}/${iso[3]}`;
+      // fallback: try Date parse
+      const parsed = new Date(val);
+      if (!isNaN(parsed.getTime())) {
+        const y = parsed.getFullYear();
+        const m = String(parsed.getMonth() + 1).padStart(2, "0");
+        const d = String(parsed.getDate()).padStart(2, "0");
+        return `${y}/${m}/${d}`;
+      }
+    }
+    return "";
+  };
+
   // Filter logic
 
   const [selectedFilters, setSelectedFilters] = useState({
@@ -223,9 +249,17 @@ function Transfer() {
       setLoading(true);
       const token = getSessionData("accessToken") || "";
       const username = getSessionData("userProfile")?.username || "";
+      const payload = {
+        ...transfer,
+        search: {
+          ...transfer.search,
+          fromDate: formatDateForApi(transfer.search.fromDate),
+          toDate: formatDateForApi(transfer.search.toDate),
+        },
+      };
       const response = await postLoginRequest(
         "api/v1/transfer/filter-list",
-        { ...transfer },
+        payload,
         FILTERLIST,
         token,
         username,
