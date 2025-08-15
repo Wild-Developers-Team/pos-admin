@@ -422,9 +422,16 @@ function Item() {
       const username = getSessionData("userProfile")?.username || "";
       const payload = {
         ...selectedItem,
-        category: selectedItem.category.code,
-        brand: selectedItem.brand.code,
+        category:
+          typeof selectedItem.category === "string"
+            ? selectedItem.category
+            : selectedItem.category.code,
+        brand:
+          typeof selectedItem.brand === "string"
+            ? selectedItem.brand
+            : selectedItem.brand.code,
       };
+
       const response = await postLoginRequest(
         "api/v1/item/update",
         payload,
