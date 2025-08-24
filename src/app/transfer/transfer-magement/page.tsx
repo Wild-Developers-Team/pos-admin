@@ -44,6 +44,90 @@ function Transfer() {
     },
   });
 
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+
+  const handlePrint = (tableId: string) => {
+    const content = document.getElementById(tableId);
+    const printWindow = window.open("", "", "height=700,width=900");
+
+    if (printWindow && content) {
+      const now = new Date();
+      const dateTimeString = now.toLocaleString();
+      const logoUrl = `${window.location.origin}/admin/images/dpd.png`;
+
+      printWindow.document.write(`
+      <html>
+        <head>
+          <title>Invoice</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            thead { background-color: #f5f5f5; }
+            @media print {
+              .no-print {
+               display: none !important;
+                  }
+             }
+            .header, .footer { width: 100%; }
+            .header { border-bottom: 1px solid #ccc; padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+            .footer { margin-top: 48px; font-size: 14px; color: #4b5563; }
+            .footer .signature { margin-top: 48px; }
+            .footer .signature .line { width: 192px; border-top: 1px solid #000; padding-top: 8px; }
+            .notes { margin-top: 40px; font-size: 14px; color: #4b5563; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <img id="print-logo" src="${logoUrl}" alt="Company Logo" style="height: 60px; margin-bottom: 8px;" />
+              <div style="margin-top: 8px; font-size: 20px; font-weight: bold;">DPD Chemical</div>
+              <div style="font-size: 14px; color: #4b5563;">Pemaduwa, Anuradhapura</div>
+              <div style="font-size: 14px; color: #4b5563;">078 6065410 / 025 3133969</div>
+              <div style="font-size: 14px; color: #4b5563;">nimeshkalharapk@gmail.com</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 14px;">${dateTimeString}</div>
+            </div>
+          </div>
+
+          <div id="billContent">
+            ${content.innerHTML}
+          </div>
+
+          <div class="footer">
+            <div class="signature">
+              <div class="line">Authorized Signature</div>
+              <div style="margin-top: 16px; font-size: 12px;">
+                Date: ________________________
+              </div>
+            </div>
+
+            <div class="notes">
+              <p style="font-weight: 600;">NOTES:</p>
+              <p>Please verify items upon receipt.</br>Report any missing/damaged items within 24hrs.</p>
+            </div>
+          </div>
+           <script>
+            const logo = document.getElementById('print-logo');
+            if (logo.complete) {
+              window.print();
+              window.close();
+            } else {
+              logo.onload = () => {
+                window.print();
+                window.close();
+              };
+            }
+          </script>
+        </body>
+      </html>
+    `);
+      printWindow.document.close();
+      printWindow.focus();
+    }
+  };
+
   // Privileges and defaultStatus state
   const [privileges, setPrivileges] = useState({
     add: false,
@@ -294,8 +378,7 @@ function Transfer() {
 
       if (response.success) {
         setSelectedTransfer(response.data);
-        setModalMode("view");
-        setShowModal(true);
+        setShowDetailsModal(true);
       } else {
         showErrorAlert(response.message);
       }
@@ -499,22 +582,6 @@ function Transfer() {
                   <th className="w-[10%] px-6 py-3 text-center">Action</th>
                   <th
                     className="cursor-pointer px-6 py-3 text-center"
-                    onClick={() => handleSort("code")}
-                  >
-                    <div className="flex items-center justify-center">
-                      Code {renderSortIcons("code")}
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer px-6 py-3 text-center"
-                    onClick={() => handleSort("desription")}
-                  >
-                    <div className="flex items-center justify-center">
-                      Name {renderSortIcons("description")}
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer px-6 py-3 text-center"
                     onClick={() => handleSort("fromLocation")}
                   >
                     <div className="flex items-center justify-center">
@@ -529,40 +596,33 @@ function Transfer() {
                       To Location {renderSortIcons("toLocation")}
                     </div>
                   </th>
+
                   <th
                     className="cursor-pointer px-6 py-3 text-center"
-                    onClick={() => handleSort("lablePrice")}
+                    onClick={() => handleSort("transferStatus")}
                   >
                     <div className="flex items-center justify-center">
-                      Lable Price {renderSortIcons("lablePrice")}
+                      Transfer Status {renderSortIcons("transferStatus")}
                     </div>
                   </th>
                   <th
                     className="cursor-pointer px-6 py-3 text-center"
-                    onClick={() => handleSort("cost")}
+                    onClick={() => handleSort("createdBy")}
                   >
                     <div className="flex items-center justify-center">
-                      Cost {renderSortIcons("cost")}
+                      Created By {renderSortIcons("createdBy")}
                     </div>
                   </th>
                   <th
                     className="cursor-pointer px-6 py-3 text-center"
-                    onClick={() => handleSort("retailPrice")}
+                    onClick={() => handleSort("createdDate")}
                   >
                     <div className="flex items-center justify-center">
-                      Sales Price {renderSortIcons("retailPrice")}
+                      Created Date {renderSortIcons("createdDate")}
                     </div>
                   </th>
                   <th
                     className="cursor-pointer px-6 py-3 text-center"
-                    onClick={() => handleSort("qty")}
-                  >
-                    <div className="flex items-center justify-center">
-                      Quantity {renderSortIcons("qty")}
-                    </div>
-                  </th>
-                  <th
-                    className="w-[10%] cursor-pointer px-6 py-3 text-center"
                     onClick={() => handleSort("status")}
                   >
                     <div className="flex items-center justify-center">
@@ -583,84 +643,69 @@ function Transfer() {
                     </td>
                   </tr>
                 ) : (
-                  transferList.flatMap((transfer, idx) =>
-                    transfer.itemTransferDetails.map((detail, dIdx) => (
-                      <tr
-                        key={`${idx}-${dIdx}`}
-                        className="border-b bg-white text-center dark:border-gray-700 dark:bg-gray-800"
-                      >
-                        {/* Action buttons */}
-                        <td className="w-[10%] px-6 py-4">
-                          <div className="flex items-center justify-center gap-3">
-                            {privileges.view && (
-                              <button
-                                onClick={() =>
-                                  handleViewTransfer(transfer.id.toString())
-                                }
-                                title="View"
-                              >
-                                <ScanEye className="h-5 w-5 text-primary" />
-                              </button>
-                            )}
-                            {privileges.update && (
-                              <button
-                                onClick={() =>
-                                  handleEditTransfer(transfer.id.toString())
-                                }
-                                title="Update"
-                              >
-                                <FilePenLine className="h-5 w-5 text-success" />
-                              </button>
-                            )}
-                          </div>
-                        </td>
+                  transferList.map((transfer, idx) => (
+                    <tr
+                      key={idx}
+                      className="border-b bg-white text-center dark:border-gray-700 dark:bg-gray-800"
+                    >
+                      {/* Action buttons */}
+                      <td className="w-[10%] px-6 py-4">
+                        <div className="flex items-center justify-center gap-3">
+                          {privileges.view && (
+                            <button
+                              onClick={() =>
+                                handleViewTransfer(transfer.id.toString())
+                              }
+                              title="View"
+                            >
+                              <ScanEye className="h-5 w-5 text-primary" />
+                            </button>
+                          )}
+                          {privileges.update && (
+                            <button
+                              onClick={() =>
+                                handleEditTransfer(transfer.id.toString())
+                              }
+                              title="Update"
+                            >
+                              <FilePenLine className="h-5 w-5 text-success" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
 
-                        {/* Code */}
-                        <td className="px-6 py-4">{detail.item.code}</td>
+                      {/* Code */}
+                      <td className="px-6 py-4">
+                        {transfer.fromLocation.description}
+                      </td>
 
-                        {/* Name (description) */}
-                        <td className="px-6 py-4">{detail.item.description}</td>
+                      {/* Name (description) */}
+                      <td className="px-6 py-4">
+                        {transfer.toLocation.description}
+                      </td>
 
-                        <td className="px-6 py-4">
-                          {transfer.fromLocation.description}
-                        </td>
-                        <td className="px-6 py-4">
-                          {transfer.toLocation.description}
-                        </td>
+                      <td className="px-6 py-4">
+                        {transfer.transferStatusDescription}
+                      </td>
+                      <td className="px-6 py-4">{transfer.createdBy}</td>
 
-                        {/* Label Price */}
-                        <td className="px-6 py-4">
-                          {detail.lablePrice.toFixed(2)}
-                        </td>
+                      {/* Label Price */}
+                      <td className="px-6 py-4">{transfer.createdDate}</td>
 
-                        {/* Cost */}
-                        <td className="px-6 py-4">
-                          {detail.totCost.toFixed(2)}
-                        </td>
-
-                        {/* Retail/Sales Price */}
-                        <td className="px-6 py-4">
-                          {detail.retailPrice.toFixed(2)}
-                        </td>
-
-                        {/* Quantity */}
-                        <td className="px-6 py-4">{detail.qty}</td>
-
-                        {/* Status */}
-                        <td className="px-6 py-4">
-                          <span
-                            className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                              detail.item.status === "ACTIVE"
-                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                            }`}
-                          >
-                            {detail.item.statusDescription}
-                          </span>
-                        </td>
-                      </tr>
-                    )),
-                  )
+                      {/* Status */}
+                      <td className="px-6 py-4">
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                            transfer.status === "ACTIVE"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                              : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                          }`}
+                        >
+                          {transfer.statusDescription}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
@@ -721,21 +766,7 @@ function Transfer() {
                   />
                 </svg>
               </button>
-              <h2 className="mb-4 text-lg font-semibold">
-                {modalMode === "view" ? "View Transfer" : "Edit Transfer"}
-              </h2>
-
-              <p className="mb-2">
-                <strong>Code:</strong>{" "}
-                {selectedTransfer.itemTransferDetails[0]?.item.code ||
-                  "Unavailable"}
-              </p>
-
-              <p className="mb-2">
-                <strong>Name:</strong>{" "}
-                {selectedTransfer.itemTransferDetails[0]?.item.description ||
-                  "Unavailable"}
-              </p>
+              <h2 className="mb-4 text-lg font-semibold">Edit Transfer</h2>
 
               <p className="mb-2">
                 <strong>From Location:</strong>{" "}
@@ -748,57 +779,18 @@ function Transfer() {
               </p>
 
               <p className="mb-2">
-                <strong>Category:</strong>{" "}
-                {selectedTransfer.itemTransferDetails[0]?.item.category
-                  .description || "Unavailable"}
+                <strong>Transfer Status:</strong>{" "}
+                {selectedTransfer.transferStatusDescription || "Unavailable"}
               </p>
 
               <p className="mb-2">
-                <strong>Brand:</strong>{" "}
-                {selectedTransfer.itemTransferDetails[0]?.item.brand
-                  .description || "Unavailable"}
+                <strong>Created By:</strong>{" "}
+                {selectedTransfer.createdBy || "Unavailable"}
               </p>
 
               <p className="mb-2">
-                <strong>Unit:</strong>{" "}
-                {selectedTransfer.itemTransferDetails[0]?.item
-                  .unitDescription || "Unavailable"}
-              </p>
-
-              <p className="mb-2">
-                <strong>Lable Price:</strong>{" "}
-                {selectedTransfer.itemTransferDetails[0]?.lablePrice !==
-                undefined
-                  ? `Rs. ${selectedTransfer.itemTransferDetails[0].lablePrice.toFixed(2)}`
-                  : "Unavailable"}
-              </p>
-
-              <p className="mb-2">
-                <strong>Retail Price:</strong>{" "}
-                {selectedTransfer.itemTransferDetails[0]?.retailPrice !==
-                undefined
-                  ? `Rs. ${selectedTransfer.itemTransferDetails[0].retailPrice.toFixed(2)}`
-                  : "Unavailable"}
-              </p>
-
-              <p className="mb-2">
-                <strong>Wholesale Price:</strong>{" "}
-                {selectedTransfer.itemTransferDetails[0]?.wholesalePrice !==
-                undefined
-                  ? `Rs. ${selectedTransfer.itemTransferDetails[0].wholesalePrice.toFixed(2)}`
-                  : "Unavailable"}
-              </p>
-
-              <p className="mb-2">
-                <strong>Retail Discount:</strong>{" "}
-                {selectedTransfer.itemTransferDetails[0]?.retailDiscount ||
-                  "Unavailable"}
-              </p>
-
-              <p className="mb-2">
-                <strong>Wholsale Discount:</strong>{" "}
-                {selectedTransfer.itemTransferDetails[0]?.wholesaleDiscount ||
-                  "Unavailable"}
+                <strong>Created Date:</strong>{" "}
+                {selectedTransfer.createdDate || "Unavailable"}
               </p>
 
               {modalMode === "edit" ? (
@@ -861,6 +853,125 @@ function Transfer() {
                     Save
                   </button>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+        {showDetailsModal && selectedTransfer && (
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+            <div
+              id="print-transfer"
+              className="hide-scrollbar relative m-2 max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300"
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="no-print absolute right-4 top-4 text-gray-500 hover:text-red-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+
+              <h2 className="mb-4 text-lg font-semibold">Transfer Details</h2>
+
+              <p>
+                <strong>From Location :</strong>{" "}
+                {selectedTransfer.fromLocation.description}
+              </p>
+              <p>
+                <strong>To Location :</strong>{" "}
+                {selectedTransfer.toLocation.description}
+              </p>
+              <p className="no-print">
+                <strong>Status :</strong> {selectedTransfer.statusDescription}
+              </p>
+              <p className="no-print">
+                <strong>Transfer Status :</strong>{" "}
+                {selectedTransfer.transferStatusDescription}
+              </p>
+              <p className="no-print">
+                <strong>Created By :</strong> {selectedTransfer.createdBy}
+              </p>
+              <p className="no-print">
+                <strong>Created Date :</strong> {selectedTransfer.createdDate}
+              </p>
+
+              {/* Item details table */}
+              <h3 className="text-md mt-4 font-semibold">Item Details</h3>
+              <div className="hide-scrollbar mt-2 overflow-x-auto rounded-lg">
+                <table className="w-full text-sm text-gray-600 dark:text-gray-300">
+                  <thead className="bg-gray-100 text-xs uppercase dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                      <th className="px-4 py-2">Code</th>
+                      <th className="px-4 py-2">Description</th>
+                      <th className="px-4 py-2">Quantity</th>
+                      <th className="px-4 py-2">Cost</th>
+                      <th className="px-4 py-2">Label Price</th>
+                      <th className="px-4 py-2">Retail Price</th>
+                      <th className="no-print px-4 py-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedTransfer.itemTransferDetails.map(
+                      (detail: any, idx: number) => (
+                        <tr
+                          key={idx}
+                          className="border-t bg-gray-50 dark:border-gray-600 dark:bg-gray-900"
+                        >
+                          <td className="px-4 py-2 text-center">
+                            {detail.item.code}
+                          </td>
+                          <td className="px-4 py-2">
+                            {detail.item.description}
+                          </td>
+                          <td className="px-4 py-2 text-center">
+                            {detail.qty}
+                          </td>
+                          <td className="px-4 py-2 text-right">
+                            {detail.totCost.toFixed(2)}
+                          </td>
+                          <td className="px-4 py-2 text-right">
+                            {detail.lablePrice.toFixed(2)}
+                          </td>
+                          <td className="px-4 py-2 text-right">
+                            {detail.retailPrice.toFixed(2)}
+                          </td>
+                          <td className="no-print px-4 py-2 text-center">
+                            {detail.item.statusDescription}
+                          </td>
+                        </tr>
+                      ),
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Close button */}
+              <div className="no-print mt-4 flex justify-end space-x-2">
+                <button
+                  onClick={() => setShowDetailsModal(false)}
+                  className="rounded-lg bg-gray-500 px-4 py-1.5 text-white"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => handlePrint("print-transfer")}
+                  className="rounded-lg bg-primary px-4 py-1.5 text-white"
+                >
+                  Print Transfer
+                </button>
               </div>
             </div>
           </div>

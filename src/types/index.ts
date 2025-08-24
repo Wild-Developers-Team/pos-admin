@@ -763,7 +763,6 @@ export interface ITransferStockFilter {
   };
 }
 
-
 export interface ISummary {
   fromDate: string;
   toDate: string;
@@ -821,4 +820,12 @@ export interface ISummary {
     totalSales: number;
     totalCashOut: number;
   };
+}
+
+export interface IAddCash {
+  amount: number;
+  cashInOut: string;
+  cashInOutDate: string;
+  cashierUser: string;
+  remark: string;
 }

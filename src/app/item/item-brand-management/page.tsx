@@ -639,7 +639,7 @@ function Brand() {
                   <strong>Name:</strong>
                   <input
                     type="text"
-                    className="mt-1 w-full rounded-lg border p-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
+                    className="mt-1 w-full rounded-lg border p-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={selectedBrand.description}
                     onChange={(e) =>
                       setSelectedBrand({
@@ -721,7 +721,7 @@ function Brand() {
         {/* Add modal  */}
         {showAddModal && (
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg dark:bg-gray-800 text-gray-600 dark:text-gray-300 dark:border dark:border-gray-500">
+            <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
               {/* Close Icon Top-Right */}
               <button
                 onClick={() => setShowAddModal(false)}
@@ -752,7 +752,7 @@ function Brand() {
                   onChange={handleChange}
                   required
                   pattern="^\S+$"
-                  className="mb-2 w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newBrand.code}
                 />
                 <input
@@ -760,14 +760,14 @@ function Brand() {
                   placeholder="Brand Name"
                   name="description"
                   required
-                  className="mb-2 w-full rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                   value={newBrand.description}
                   onChange={handleChange}
                 />
 
                 <div className="relative">
                   <select
-                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 dark:border-gray-500 dark:bg-gray-900 focus:outline-none"
+                    className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
                     value={newBrand.status}
                     name="status"
                     onChange={(e) =>

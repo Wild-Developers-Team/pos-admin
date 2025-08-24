@@ -5,13 +5,51 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { useEffect, useState } from "react";
 import { getSessionData } from "@/utils/session";
 import { postLoginRequest } from "@/services/api.service";
-import { FILTERLIST, REFDATA, VIEW } from "@/utils/apiMessage";
-import { showErrorAlert } from "@/utils/alert";
+import {
+  ADD,
+  DELETE,
+  EDIT,
+  FILTERLIST,
+  REFDATA,
+  VIEW,
+} from "@/utils/apiMessage";
+import { showErrorAlert, showSuccessAlert } from "@/utils/alert";
 import withAuth from "@/utils/withAuth";
-import { ChevronDown, House } from "lucide-react";
+import { ChevronDown, FilePenLine, House, Trash2 } from "lucide-react";
+import Swal from "sweetalert2";
+import { IAddCash } from "@/types";
 
 function Balance() {
   const [loading, setLoading] = useState(true);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editData, setEditData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [loadingAdd, setLoadingAdd] = useState(false);
+
+  const [newCash, setNewCash] = useState<IAddCash>({
+    amount: 0,
+    cashInOut: "",
+    cashInOutDate: "",
+    cashierUser: "",
+    remark: "",
+  });
+
+  const openAddModal = (cashier: string) => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+
+    setNewCash({
+      amount: 0,
+      cashInOut: "IN",
+      cashInOutDate: `${yyyy}/${mm}/${dd}`,
+      cashierUser: cashier,
+      remark: "",
+    });
+    setAddModalOpen(true);
+  };
 
   const [privileges, setPrivileges] = useState({
     add: false,
@@ -21,6 +59,20 @@ function Balance() {
     delete: false,
     useritemPrivilegeAssign: false,
   });
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+    setNewCash((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const [saving, setSaving] = useState(false);
 
   const [locations, setLocations] = useState<
     {
@@ -157,6 +209,52 @@ function Balance() {
     }
   }, [fromDate, toDate]);
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoadingAdd(true);
+    setError(null);
+
+    try {
+      const token = getSessionData("accessToken") || "";
+      const userProfile = getSessionData("userProfile");
+      const response = await postLoginRequest(
+        "api/v1/cash-book/add",
+        {
+          ...newCash,
+        },
+        ADD,
+        token,
+        userProfile?.username,
+      );
+
+      if (response.success) {
+        showSuccessAlert(
+          "Success",
+          response.message || "User role created successfully",
+        );
+        setAddModalOpen(false);
+        // Reset form fields
+        setNewCash({
+          amount: 0,
+          cashInOut: "",
+          cashInOutDate: "",
+          cashierUser: "",
+          remark: "",
+        });
+        fetchBalance(fromDate, toDate);
+      } else {
+        showErrorAlert(
+          "User Create Failed",
+          response.message || "Something went wrong!",
+        );
+      }
+    } catch (err) {
+      console.error("Error calling API:", err);
+    } finally {
+      setLoadingAdd(false);
+    }
+  };
+
   // Fetch reference data (including locations and privileges)
   const fetchReferenceData = async () => {
     try {
@@ -250,6 +348,79 @@ function Balance() {
       }
     } catch (error) {
       console.error("View error:", error);
+    }
+  };
+
+  const handleDelete = async (id: number, requestType: string) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won’t be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const token = getSessionData("accessToken") || "";
+        const username = getSessionData("userProfile")?.username || "";
+        const response = await postLoginRequest(
+          "api/v1/cash-book/delete",
+          { id, requestType },
+          DELETE,
+          token,
+          username,
+        );
+
+        if (response.success) {
+          Swal.fire("Deleted!", "Record has been deleted.", "success");
+          fetchBalance(fromDate, toDate);
+        } else {
+          showErrorAlert(response.message);
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+      }
+    }
+  };
+
+  const handleEdit = (entry: any) => {
+    setEditData({ ...entry });
+    setEditModalOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      setSaving(true);
+      const token = getSessionData("accessToken") || "";
+      const username = getSessionData("userProfile")?.username || "";
+
+      const response = await postLoginRequest(
+        "api/v1/cash-book/edit",
+        {
+          id: editData.id,
+          amount: Number(editData.amount),
+          remark: editData.remark || "",
+        },
+        EDIT,
+        token,
+        username,
+      );
+
+      if (response.success) {
+        showSuccessAlert(
+          "Successfully Updated",
+          "Check & verify updated details.",
+        );
+        setEditModalOpen(false);
+        fetchBalance(fromDate, toDate);
+      } else {
+        showErrorAlert(response.message);
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -408,6 +579,7 @@ function Balance() {
               <th className="px-4 py-2 text-left">Sales Type</th>
               <th className="px-4 py-2 text-right">Paid</th>
               <th className="px-4 py-2 text-right">Amount</th>
+              <th className="no-print px-4 py-2 text-center">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -429,6 +601,17 @@ function Balance() {
                 </td>
                 <td className="px-4 py-2 text-right">
                   {s.totalAmount?.toFixed(2)}
+                </td>
+                <td className="no-print px-4 py-2 text-center">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(s.id, "SALES");
+                    }}
+                    title="Delete"
+                  >
+                    <Trash2 className="h-5 w-5 text-danger" />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -460,6 +643,7 @@ function Balance() {
               <th className="px-4 py-2 text-left">Remark</th>
               <th className="px-4 py-2 text-left">Customer</th>
               <th className="px-4 py-2 text-right">Debit Amount</th>
+              <th className="no-print px-4 py-2 text-center">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -477,6 +661,17 @@ function Balance() {
                 </td>
                 <td className="px-4 py-2 text-right">
                   {r.debitAmount?.toFixed(2) ?? 0}
+                </td>
+                <td className="no-print px-4 py-2 text-center">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(r.id, "RETURNS");
+                    }}
+                    title="Delete"
+                  >
+                    <Trash2 className="h-5 w-5 text-danger" />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -497,6 +692,12 @@ function Balance() {
   // Render cash in/out table
   const renderCashInOutTable = (inOuts: any[]) => (
     <div>
+      <button
+        onClick={() => openAddModal(activeCashier)}
+        className="mb-4 rounded-xl bg-primary px-4 py-2 text-xs text-white hover:bg-hover md:text-sm"
+      >
+        Add Cash In/Out
+      </button>
       <div
         id="cashInOut-table"
         className="overflow-x-auto rounded-xl border dark:border-gray-700"
@@ -509,6 +710,7 @@ function Balance() {
               <th className="px-4 py-2">Description</th>
               <th className="px-4 py-2">Remark</th>
               <th className="px-4 py-2 text-right">Amount</th>
+              <th className="no-print px-4 py-2 text-center">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -528,6 +730,28 @@ function Balance() {
                   <td className="px-4 py-2 text-right">
                     {entry?.amount?.toFixed(2)}
                   </td>
+                  <td className="no-print px-4 py-2 text-center">
+                    <div className="flex items-center justify-center gap-3">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(entry.id, "IN_OUT_OP_CL");
+                        }}
+                        title="Delete"
+                      >
+                        <Trash2 className="h-5 w-5 text-danger" />
+                      </button>
+                      <button
+                        title="Edit"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(entry);
+                        }}
+                      >
+                        <FilePenLine className="h-5 w-5 text-success" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
           </tbody>
@@ -539,6 +763,75 @@ function Balance() {
           className="rounded-xl bg-primary px-4 py-2 text-xs text-white hover:bg-hover md:text-sm"
         >
           Print Cash In/Out
+        </button>
+      </div>
+    </div>
+  );
+
+  // Render opening closed table
+  const renderOpeningClosedTable = (OpeningClosed: any[]) => (
+    <div>
+      <div
+        id="OpeningClosed-table"
+        className="overflow-x-auto rounded-xl border dark:border-gray-700"
+      >
+        <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
+          <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              {/* <th className="px-4 py-2">ID</th> */}
+              <th className="px-4 py-2">Type</th>
+              <th className="px-4 py-2">Remark</th>
+              <th className="px-4 py-2 text-right">Amount</th>
+              <th className="no-print px-4 py-2 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {OpeningClosed.filter(
+              (cashier) =>
+                cashier?.amount !== null && cashier?.amount !== undefined,
+            ).map((cashier, idx) => (
+              <tr
+                key={idx}
+                className="border-t bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+              >
+                <td className="px-4 py-2">{cashier?.cashInOutDescription}</td>
+                <td className="px-4 py-2">{cashier?.remark}</td>
+                <td className="px-4 py-2 text-right">
+                  {cashier?.amount?.toFixed(2)}
+                </td>
+                <td className="no-print px-4 py-2 text-center">
+                  <div className="flex items-center justify-center gap-3">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(cashier.id, "IN_OUT_OP_CL");
+                      }}
+                      title="Delete"
+                    >
+                      <Trash2 className="h-5 w-5 text-danger" />
+                    </button>
+                    <button
+                      title="Edit"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(cashier);
+                      }}
+                    >
+                      <FilePenLine className="h-5 w-5 text-success" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="mb-2 mt-2 flex justify-end">
+        <button
+          onClick={() => handlePrint("OpeningClosed-table")}
+          className="rounded-xl bg-primary px-4 py-2 text-xs text-white hover:bg-hover md:text-sm"
+        >
+          Print Cashier Open/Closed
         </button>
       </div>
     </div>
@@ -650,22 +943,26 @@ function Balance() {
                 <>
                   {/* Sub-tabs */}
                   <div className="mb-4 flex flex-wrap gap-2">
-                    {["Total Summary", "Sales", "Returns", "Cash In/Out"].map(
-                      (tab) => (
-                        <button
-                          key={tab}
-                          className={getSubTabClass(tab, activeCashier)}
-                          onClick={() =>
-                            setSelectedSubTab((prev) => ({
-                              ...prev,
-                              [activeCashier]: tab,
-                            }))
-                          }
-                        >
-                          {tab}
-                        </button>
-                      ),
-                    )}
+                    {[
+                      "Total Summary",
+                      "Sales",
+                      "Returns",
+                      "Cash In/Out",
+                      "Cashier Open/Closed",
+                    ].map((tab) => (
+                      <button
+                        key={tab}
+                        className={getSubTabClass(tab, activeCashier)}
+                        onClick={() =>
+                          setSelectedSubTab((prev) => ({
+                            ...prev,
+                            [activeCashier]: tab,
+                          }))
+                        }
+                      >
+                        {tab}
+                      </button>
+                    ))}
                   </div>
 
                   {/* Sub-tab content */}
@@ -691,6 +988,16 @@ function Balance() {
                     0 ? (
                       renderCashInOutTable(
                         selectedLocObj.cashiers[activeCashier].inOuts,
+                      )
+                    ) : (
+                      <p>No cash in/out records</p>
+                    )
+                  ) : selectedSubTab[activeCashier] ===
+                    "Cashier Open/Closed" ? (
+                    selectedLocObj.cashiers[activeCashier].openingClosed
+                      ?.length > 0 ? (
+                      renderOpeningClosedTable(
+                        selectedLocObj.cashiers[activeCashier].openingClosed,
                       )
                     ) : (
                       <p>No cash in/out records</p>
@@ -859,7 +1166,8 @@ function Balance() {
               <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
                 <thead className="bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
-                    <th className="px-4 py-2">ID</th>
+                    <th className="px-4 py-2">Item Code</th>
+                    <th className="px-4 py-2">Item Name</th>
                     <th className="px-4 py-2 text-right">Quantity</th>
                   </tr>
                 </thead>
@@ -869,7 +1177,8 @@ function Balance() {
                       key={idx}
                       className="border-t bg-white dark:border-gray-600 dark:bg-gray-800"
                     >
-                      <td className="px-4 py-2">{item.id}</td>
+                      <td className="px-4 py-2">{item.itemCode}</td>
+                      <td className="px-4 py-2">{item.itemName}</td>
                       <td className="px-4 py-2 text-right">{item.qty}</td>
                     </tr>
                   ))}
@@ -884,6 +1193,191 @@ function Balance() {
                 Print Return Details
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Edit Modal */}
+      {editModalOpen && (
+        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
+            {/* Close Icon Top-Right */}
+            <button
+              onClick={() => setEditModalOpen(false)}
+              className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
+            >
+              <span className="sr-only">Close</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
+            <h2 className="mb-4 text-lg font-semibold">Edit Amount</h2>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveEdit();
+              }}
+            >
+              <label className="mb-2 block text-sm font-medium">Amount</label>
+              <input
+                type="number"
+                value={editData?.amount || ""}
+                onChange={(e) =>
+                  setEditData({ ...editData, amount: e.target.value })
+                }
+                className="mb-4 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                required
+              />
+              <label className="block text-sm font-medium">Remark</label>
+              <textarea
+                value={editData?.remark || ""}
+                onChange={(e) =>
+                  setEditData((prev: any) => ({
+                    ...prev,
+                    remark: e.target.value,
+                  }))
+                }
+                className="mb-4 mt-1 w-full rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                rows={3}
+              />
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditModalOpen(false)}
+                  className="rounded-lg bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  onClick={handleSaveEdit}
+                  disabled={saving}
+                  className="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-hover"
+                >
+                  {saving ? "Updating..." : "Update"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {addModalOpen && (
+        <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="relative m-2 w-full max-w-md rounded-2xl bg-white p-6 text-gray-600 shadow-lg dark:border dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300">
+            {/* Close Icon Top-Right */}
+            <button
+              onClick={() => setAddModalOpen(false)}
+              className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
+            >
+              <span className="sr-only">Close</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <h2 className="mb-4 text-lg font-semibold">Add Cash In/Out</h2>
+            <form onSubmit={handleSubmit}>
+              <label className="mb-2 block text-sm font-medium">Amount</label>
+              <input
+                type="number"
+                placeholder="Amount"
+                name="amount"
+                value={newCash.amount}
+                onChange={handleChange}
+                required
+                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+              />
+
+              <label className="mb-2 block text-sm font-medium">Type</label>
+              <div className="relative">
+                <select
+                  className="mb-2 w-full appearance-none rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                  name="cashInOut"
+                  value={newCash.cashInOut}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="IN">IN</option>
+                  <option value="OUT">OUT</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
+              </div>
+
+              <label className="mb-2 block text-sm font-medium">Date</label>
+              <input
+                type="date"
+                name="cashInOutDate"
+                value={newCash.cashInOutDate.replace(/\//g, "-")}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const [year, month, day] = value.split("-");
+                  setNewCash((prev) => ({
+                    ...prev,
+                    cashInOutDate: `${year}/${month}/${day}`,
+                  }));
+                }}
+                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+              />
+
+              <label className="mb-2 block text-sm font-medium">Cashier</label>
+              <input
+                type="text"
+                name="cashierUser"
+                value={newCash.cashierUser}
+                disabled
+                className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+              />
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">Remark</label>
+                <textarea
+                  name="remark"
+                  value={newCash.remark}
+                  onChange={handleChange}
+                  className="mb-2 w-full rounded-lg border px-3 py-2 focus:outline-none dark:border-gray-500 dark:bg-gray-900"
+                />
+              </div>
+
+              <div className="mt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setAddModalOpen(false)}
+                  className="rounded-lg bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loadingAdd}
+                  className="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-hover"
+                >
+                  {loadingAdd ? "Adding..." : "Add Cash"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
